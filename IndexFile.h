@@ -1,0 +1,6 @@
+namespace DuoDuo
+{
+    class IndexFile
+    {
+    };
+}

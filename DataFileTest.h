@@ -9,8 +9,8 @@ class DataFileTest : public CPPUNIT_NS::TestFixture
   CPPUNIT_TEST_SUITE( DataFileTest );
   CPPUNIT_TEST( test_constructor );
   CPPUNIT_TEST( test_create );
-  //CPPUNIT_TEST( testAdd );
-  //CPPUNIT_TEST_EXCEPTION( testAddThrow, IncompatibleMoneyError );
+  CPPUNIT_TEST( test_add_data );
+  CPPUNIT_TEST( test_get_data );
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -19,8 +19,8 @@ public:
 
   void test_constructor();
   void test_create();
-  //void testAdd();
-  //void testAddThrow();
+  void test_add_data();
+  void test_get_data();
 };
 
 #endif  // DATAFILETEST_H

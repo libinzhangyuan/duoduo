@@ -12,5 +12,7 @@ void error_exit(const char* error_text);
 
 #define assert_check(check, expression) assert(check)
 
+#define error_log printf
+#define info_log printf
 
 #endif

@@ -1,0 +1,18 @@
+Index  -> DataWriteCache and ssdDataFile
+Index存储 某个一个key 到DataWriteCache或ssdDataFile中哪个位置读取value.
+
+DataFile写缓存方案：
+当写入或更改数据时
+1. 将数据保存DataWriteCache中
+2. 将数据写入hdDataFile (在普通硬盘上的数据文件), 并同步到硬盘 (使用非等待方式同步). 即同步可能滞后几秒.
+3. 依据DataWriteCache的缓冲策略，将数据写入ssdDataFile. 同步滞后数天.
+    （这一步会将写入ssdDataFile的部分从，DataWriteCache中清除，并会将这部分数据加入DataReadCache）
+DataFile读缓存方案：
+当读数据时；
+1. 在DataReadCache里面找.
+2. 利用Index在DataWriteCache或ssdDataFile中找
+
+Cache statrtics:
+Store data in WriteCache first when adding or changing data.
+Then storing data into hdDataFile after seconds.
+Then storing data into ssdDataFile after days.

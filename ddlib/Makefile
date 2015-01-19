@@ -59,21 +59,21 @@
 MY_CFLAGS = -std=c++98
 
 # The linker options.
-MY_LIBS   = /usr/local/lib/libcppunit.a ddlib/ddlib.a
+MY_LIBS   =
 
 # The pre-processor options used by the cpp (man cpp for more).
-CPPFLAGS  = -Wall -I ddlib
+CPPFLAGS  = -Wall
 
 # The options used in linking as well as in any direct use of ld.
 LDFLAGS   =
 
 # The directories in which source files reside.
 # If not specified, only the current directory will be serached.
-SRCDIRS   = ./ ./test /usr/local/include
+SRCDIRS   = ./ ./data_file /usr/local/include
 
 # The executable file name.
 # If not specified, current directory name or `a.out' will be used.
-PROGRAM   = duoduo_utest
+PROGRAM   = ddlib.a
 
 ## Implicit Section: change the following only when necessary.
 ##==========================================================================
@@ -187,13 +187,7 @@ ctags: $(HEADERS) $(SOURCES)
 # Rules for generating the executable.
 #-------------------------------------
 $(PROGRAM):$(OBJS)
-ifeq ($(SRC_CXX),)              # C program
-	$(LINK.c)   $(OBJS) $(MY_LIBS) -o $@
-	@echo Type ./$@ to execute the program.
-else                            # C++ program
-	$(LINK.cxx) $(OBJS) $(MY_LIBS) -o $@
-	@echo Type ./$@ to execute the program.
-endif
+	ar -cr $@ $(OBJS)
 
 ifndef NODEP
 ifneq ($(DEPS),)

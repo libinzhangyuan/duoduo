@@ -2,7 +2,7 @@
 #define DUO_DATA_FILE_H_
 
 #include <string>
-#include "typedef.h"
+#include "../typedef.h"
 
 namespace DuoDuo
 {
@@ -19,6 +19,10 @@ namespace DuoDuo
         f_offset add_data(const std::string& value);
 
         //f_offset change_data(f_offset begin_pos, const std::string& value);
+
+        void asynchronous_sync(void);
+
+        // void synchronous_sync(void);
 
         std::string get_full_path_file_name(void) const;
 

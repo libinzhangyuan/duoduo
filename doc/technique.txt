@@ -1,0 +1,79 @@
+ArrangeDataLogic
+
+singleton
+ArrangeDataLogic知道所有的DataFile
+每次心跳时间(0.1秒)做下面的逻辑:
+1. 如果当前没有保存的需要重整的区段(ArrangeSection)
+  --依次询问DataFile, 找到一个需要重整的区段 ArrangeSection, 暂时存储在ArrangeDataLogic中.
+2. 如果有保存下的需要重整的区段。
+  --每次心跳调用一次m_pArrangeSection->DoArrange()
+    DoArrange()返回已经重整完毕后，删除这个保存下来的ArrangeSection.导致下次心跳会执行条目1
+
+
+
+重整的逻辑：
+将40M的文件块存储在ArrangeSection中，然后遍历整个文件的后续部分 和 write_cache，将40M中已经失效的部分擦除。 接着将剩下的有效的条目重整后重写.
+
+
+
+
+
+DataCache
+每个文件单独cache，但使用一个总的DataCacheLogic来管理所有文件的cache的 内存占用问题，和失效问题
+
+WriteCache逻辑
+按照条目最近修改(或新增)的时间，缓存到了不同的CacheBlock中. 
+DataCacheLogic然后根据内存情况，选择某个文件中最后的WriteCacheBlock失效(写到硬盘中,然后删除)
+
+修改频率低的采用全部存储在一个数据结构里面。
+当数据大小很大后，(比如大于10M)，才考虑时间间隔存储.
+WriteCache的时间间隔(CacheBlock):
+1h
+2h
+3h
+4h
+6h
+8h
+12h
+18h
+24h
+36h
+48h
+3d
+4d
+5d
+8d
+10d
+...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

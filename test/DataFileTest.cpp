@@ -1,7 +1,7 @@
 // db_imp_test.cpp
 
 #include <cppunit/config/SourcePrefix.h>
-#include "DataFile.h"
+#include <data_file/DataFile.h>
 #include "DataFileTest.h"
 
 // Registers the fixture into the 'registry'

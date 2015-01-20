@@ -11,6 +11,11 @@ Warning: Changing data frequently will damage your SSD disk. Add data is ok.
 One change per second will be OK. But 100 changes per second may let SSD disk dying in few months.
 
 
+### Config
+1. Get block size of your ssd.
+sudo /sbin/dumpe2fs /dev/hda2 | grep 'Block size'
+then config the ssd block size.
+
 
 
 ### contribute

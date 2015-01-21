@@ -16,6 +16,23 @@ One change per second will be OK. But 100 changes per second may let SSD disk dy
 sudo /sbin/dumpe2fs /dev/hda2 | grep 'Block size'
 then config the ssd block size.
 
+### Compile static lib for production using.
+$ cd ddlib
+$ vim Makefile
+   --open the line:  CPPFLAGS  = -Wall
+$ make
+then coping the ddlib.a to your production lib dir.
+
+### Compile for cppunit test
+$ cd ddlib
+$ vim Makefile
+   --open the line:  CPPFLAGS  = -Wall -D \_UTEST\_
+$ make
+$ cd ..
+$ vim Makefile
+   --open the line: CPPFLAGS  = -Wall -I ddlib -D \_UTEST\_
+$ make
+$ ./duoduo\_utest
 
 
 ### contribute

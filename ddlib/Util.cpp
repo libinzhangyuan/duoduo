@@ -27,3 +27,10 @@ void error_exit(const char* error_text)
     printf("\nError exit because %s\n        -- errno: %s\n", error_text, strerror(errno));
     exit(-1);
 }
+
+//void dd_exception_assert(bool check, char* expression)
+void dd_exception_assert(bool check, const char* expression)
+{
+    if (check == false)
+        throw AssertException();
+}

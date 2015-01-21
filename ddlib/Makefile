@@ -62,7 +62,8 @@ MY_CFLAGS = -std=c++98
 MY_LIBS   =
 
 # The pre-processor options used by the cpp (man cpp for more).
-CPPFLAGS  = -Wall
+#CPPFLAGS  = -Wall
+CPPFLAGS  = -Wall -D _UTEST_
 
 # The options used in linking as well as in any direct use of ld.
 LDFLAGS   =

@@ -3,12 +3,14 @@
 
 #include <string>
 #include "../typedef.h"
+#include "BlockStructure.h"
 
 namespace DuoDuo
 {
-    class BlockStructure_Big
+    class BlockStructure_Big : public BlockStructure
     {
     public:
+        BlockStructure_Big(void) : BlockStructure(BlockStructure::eBlockType_Big) {}
     };
 }
 

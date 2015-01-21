@@ -55,6 +55,12 @@ DataFile::DataFile(const std::string& folder, const std::string& filename, int f
 
 f_offset DataFile::AddData(const std::string& key, const std::string& value)
 {
+    // if is the big data.
+    //   create new blocks and save
+    //   remove same key,value in cached_block
+    //   return
+    //
+    // small data
     // cached block enough for new data
     //   append data to it
     //if (m_pCachedBlock != NULL)

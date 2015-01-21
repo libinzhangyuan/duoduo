@@ -10,6 +10,8 @@ namespace DuoDuo
     class BlockStructure_Normal : public BlockStructure
     {
     public:
+        BlockStructure_Normal(void) : BlockStructure(BlockStructure::eBlockType_Normal) {}
+
         virtual bool IsEnoughForData(const std::string& block, const std::string& key, const std::string& value) const;
         virtual void AppendData(std::string& block, const std::string& key, const std::string& value);
     };

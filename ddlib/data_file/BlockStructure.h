@@ -11,21 +11,23 @@ namespace DuoDuo
     public:
         enum BlockType
         {
-            None = 0,
-            Normal = 1,
-            Big = 2,
-            DataOnly = 3
+            eBlockType_None = 0,
+            eBlockType_Normal = 1,
+            eBlockType_Big = 2,
+            eBlockType_DataOnly = 3
         };
 
-        BlockStructure(void) {}
+        BlockStructure(BlockStructure::BlockType blockType) : m_BlockType(blockType) {}
         virtual ~BlockStructure(void) {}
 
         static BlockStructure* SelectStructure(const std::string& key, const std::string& value);
         static BlockStructure* SelectStructure(BlockType blockType);
         static BlockStructure* SelectStructure(const std::string& block); // block is truly data in a file block.
 
-        virtual bool IsEnoughForData(const std::string& block, const std::string& key, const std::string& value) const = 0;
-        virtual void AppendData(std::string& block, const std::string& key, const std::string& value) = 0;
+        BlockType Type(void) {return m_BlockType;}
+
+        //virtual bool IsEnoughForData(const std::string& block, const std::string& key, const std::string& value) const = 0;
+        //virtual void AppendData(std::string& block, const std::string& key, const std::string& value) = 0;
 
         //struct LoadDataRst
         //{
@@ -34,6 +36,7 @@ namespace DuoDuo
         //};
         //virtual std::map<std::string /*key*/, std::string /*value*/> LoadData(std::string& block) = NULL;
     private:
+        BlockType m_BlockType;
     };
 }
 

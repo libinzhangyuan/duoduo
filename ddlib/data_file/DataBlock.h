@@ -19,6 +19,7 @@ namespace DuoDuo
         bool IsEnoughForData(const std::string& key, const std::string& value) const;
 
         void AppendData(const std::string& key, const std::string& value);
+        bool IsBigData(const std::string& key, const std::string& value) const;
 
     private:
         DataBlock(void);

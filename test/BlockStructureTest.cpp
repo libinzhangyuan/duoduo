@@ -30,15 +30,15 @@ void BlockStructureTest::test_create()
 
 void BlockStructureTest::test_SelectStructure_by_blockType(void)
 {
-    CPPUNIT_ASSERT(BlockStructure::SelectStructure(BlockStructure::eBlockType_Normal) != NULL);
-    CPPUNIT_ASSERT(BlockStructure::SelectStructure(BlockStructure::eBlockType_Normal)->Type() == BlockStructure::eBlockType_Normal);
+    CPPUNIT_ASSERT(BlockStructure::SelectStructure(BlockStructure::eBlockType_Normal, 4096) != NULL);
+    CPPUNIT_ASSERT(BlockStructure::SelectStructure(BlockStructure::eBlockType_Normal, 4096)->Type() == BlockStructure::eBlockType_Normal);
 
-    CPPUNIT_ASSERT(BlockStructure::SelectStructure(BlockStructure::eBlockType_Big) != NULL);
-    CPPUNIT_ASSERT(BlockStructure::SelectStructure(BlockStructure::eBlockType_Big)->Type() == BlockStructure::eBlockType_Big);
+    CPPUNIT_ASSERT(BlockStructure::SelectStructure(BlockStructure::eBlockType_Big, 4096) != NULL);
+    CPPUNIT_ASSERT(BlockStructure::SelectStructure(BlockStructure::eBlockType_Big, 4096)->Type() == BlockStructure::eBlockType_Big);
 
-    CPPUNIT_ASSERT(BlockStructure::SelectStructure(BlockStructure::eBlockType_DataOnly) != NULL);
-    CPPUNIT_ASSERT(BlockStructure::SelectStructure(BlockStructure::eBlockType_DataOnly)->Type() == BlockStructure::eBlockType_DataOnly);
+    CPPUNIT_ASSERT(BlockStructure::SelectStructure(BlockStructure::eBlockType_DataOnly, 4096) != NULL);
+    CPPUNIT_ASSERT(BlockStructure::SelectStructure(BlockStructure::eBlockType_DataOnly, 4096)->Type() == BlockStructure::eBlockType_DataOnly);
 
-    CPPUNIT_ASSERT_THROW(BlockStructure::SelectStructure(BlockStructure::eBlockType_None), AssertException);
-    //CPPUNIT_ASSERT(BlockStructure::SelectStructure(BlockStructure::eBlockType_None) == NULL); // assert
+    CPPUNIT_ASSERT_THROW(BlockStructure::SelectStructure(BlockStructure::eBlockType_None, 4096), AssertException);
+    //CPPUNIT_ASSERT(BlockStructure::SelectStructure(BlockStructure::eBlockType_None, 4096) == NULL); // assert
 }

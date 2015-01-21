@@ -10,7 +10,7 @@ namespace DuoDuo
     class BlockStructure_Big : public BlockStructure
     {
     public:
-        BlockStructure_Big(void) : BlockStructure(BlockStructure::eBlockType_Big) {}
+        BlockStructure_Big(size_t blockSize) : BlockStructure(BlockStructure::eBlockType_Big, blockSize) {}
     };
 }
 

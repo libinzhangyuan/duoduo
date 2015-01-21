@@ -1,5 +1,6 @@
 #include <assert.h>
 #include "../Util.h"
+#include "../Config.h"
 
 #include "BlockStructure.h"
 #include "BlockStructure_Normal.h"
@@ -8,9 +9,9 @@
 
 using namespace DuoDuo;
 
-static BlockStructure_Normal static_BlockStructure_Normal;
-static BlockStructure_Big static_BlockStructure_Big;
-static BlockStructure_DataOnly static_BlockStructure_DataOnly;
+static BlockStructure_Normal static_BlockStructure_Normal(Config::Ins().ssd_block_size());
+static BlockStructure_Big static_BlockStructure_Big(Config::Ins().ssd_block_size());
+static BlockStructure_DataOnly static_BlockStructure_DataOnly(Config::Ins().ssd_block_size());
 
 BlockStructure* BlockStructure::SelectStructure(const std::string& key, const std::string& value)
 {
@@ -22,7 +23,7 @@ BlockStructure* BlockStructure::SelectStructure(const std::string& key, const st
     //     return static_BlockStructure_Big
 }
 
-BlockStructure* BlockStructure::SelectStructure(BlockType blockType)
+BlockStructure* BlockStructure::SelectStructure(BlockType blockType, size_t block_size)
 {
     switch (blockType)
     {
@@ -37,4 +38,21 @@ BlockStructure* BlockStructure::SelectStructure(BlockType blockType)
 BlockStructure* BlockStructure::SelectStructure(const std::string& block)
 {
     return &static_BlockStructure_Normal;
+}
+
+void BlockStructure::InitBlock(std::string& block) const
+{
+    assert_check(block.empty(), "BlockStructure_Normal::InitBlock");
+    block.resize(m_BlockSize);
+    InitHead(block);
+}
+
+void BlockStructure::InitHead(std::string& block) const
+{
+    block[2] = m_BlockType;
+}
+
+size_t BlockStructure:: HeadSize(void) const
+{
+    return 4;
 }

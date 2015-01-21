@@ -9,14 +9,14 @@ namespace DuoDuo
     {
     public:
         Config() {}
-        static Config& ins(void);
+        static Config& Ins(void);
 
         const std::string& get_db_folder(void) const {return m_folder;}
         void set_db_folder(const std::string& full_path_folder) {m_folder = full_path_folder;}
 
         int ssd_block_size() const {return 4096;}
 
-        int normal_block_key_ratio_to_16(void) {return 3;}
+        int normal_block_key_ratio_to_16(void) {return 5;}
 
     private:
         static Config m_Ins;

@@ -4,6 +4,7 @@
 #include <data_file/BlockStructure.h>
 #include "BlockStructureTest.h"
 #include <Util.h>
+#include <check_function.h>
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( BlockStructureTest );

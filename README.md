@@ -17,13 +17,16 @@
 *  then config the ssd block size.
 
 ### Compile static lib for production using.
-*  $ cd ddlib
-*  $ vim Makefile
-*      --open the line:  CPPFLAGS  = -Wall
+*  $ cd essential
+*  $ vim Makefile : open the line: CPPFLAGS  = -Wall
+*  $ make
+*  $ cd ../ddlib
+*  $ vim Makefile : open the line:  CPPFLAGS  = -Wall -I ../essential
 *  $ make
 *  then coping the ddlib.a to your production lib dir.
 
 ### Compile for cppunit test
+
 #### Install cppunit
 *   download from http://nchc.dl.sourceforge.net/project/cppunit/cppunit/1.12.1/cppunit-1.12.1.tar.gz
 *   unpack it. 
@@ -33,12 +36,16 @@
 *   $ make check
 *   $ make install
 *   $ cp cppunit /usr/include/
+
 #### Compile
+*   $ cd essential
+*   $ vim Makefile : open the line: CPPFLAGS  = -Wall -D \_UTEST\_
+*   $ make
 *   $ cd ddlib
-*   $ vim Makefile : open the line:  CPPFLAGS  = -Wall -D \_UTEST\_
+*   $ vim Makefile : open the line:  CPPFLAGS  = -Wall -I ../essential -D \_UTEST\_
 *   $ make
 *   $ cd ..
-*   $ vim Makefile : open the line: CPPFLAGS  = -Wall -I ddlib -D \_UTEST\_
+*   $ vim Makefile : open the line: CPPFLAGS  = -Wall -I essential -I ddlib -D \_UTEST\_
 *   $ make
 *   $ ./duoduo\_utest
 

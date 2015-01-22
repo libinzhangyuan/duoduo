@@ -28,9 +28,4 @@ void error_exit(const char* error_text)
     exit(-1);
 }
 
-//void dd_exception_assert(bool check, char* expression)
-void dd_exception_assert(bool check, const char* expression)
-{
-    if (check == false)
-        throw AssertException();
-}
+

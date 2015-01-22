@@ -1,5 +1,6 @@
 #include "../Config.h"
 
+#include <check_function.h>
 #include "BlockStructure_Normal.h"
 
 using namespace DuoDuo;

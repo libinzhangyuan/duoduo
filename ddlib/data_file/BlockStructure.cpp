@@ -1,4 +1,7 @@
 #include <assert.h>
+
+#include <check_function.h>
+
 #include "../Util.h"
 #include "../Config.h"
 

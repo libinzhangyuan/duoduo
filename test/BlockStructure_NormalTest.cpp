@@ -10,6 +10,7 @@
 
 #include <Util.h>
 #include <Config.h>
+#include <check_function.h>
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( BlockStructure_NormalTest );
@@ -62,4 +63,18 @@ void BlockStructure_NormalTest::test_DataSectionSize()
     block.resize(4096);
     BlockStructure_Normal normal(block);
     CPPUNIT_ASSERT(normal.DataSectionSize() == 2816); // (4096 * 11 / 16)
+}
+
+void BlockStructure_NormalTest::test_GetKeyNeedLen()
+{
+    CPPUNIT_ASSERT(BlockStructure_Normal::GetKeyNeedLen(std::string("1234567890")) == 15);
+    CPPUNIT_ASSERT(BlockStructure_Normal::GetKeyNeedLen(std::string("1")) == 6);
+    CPPUNIT_ASSERT_THROW(BlockStructure_Normal::GetKeyNeedLen(std::string("")), AssertException);
+}
+
+void BlockStructure_NormalTest::test_GetValueNeedLen()
+{
+    CPPUNIT_ASSERT(BlockStructure_Normal::GetValueNeedLen(std::string("1234567890")) == 13);
+    CPPUNIT_ASSERT(BlockStructure_Normal::GetValueNeedLen(std::string("1")) == 4);
+    CPPUNIT_ASSERT(BlockStructure_Normal::GetValueNeedLen(std::string("")) == 3);
 }

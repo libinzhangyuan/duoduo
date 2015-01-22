@@ -1,2 +1,2 @@
-cd ~/work/code/duoduo/ddlib/ && make clean && make && cd .. && make clean && make
+make clean && cd ddlib/ && make clean && make && cd .. && make
 cd ~/work/code/duoduo/

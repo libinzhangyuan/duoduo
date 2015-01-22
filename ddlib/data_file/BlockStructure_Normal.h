@@ -25,12 +25,13 @@ namespace DuoDuo
         size_t KeySectionSize(void) const;
         size_t DataSectionSize(void) const;
 
+        static size_t GetKeyNeedLen(const std::string& key);
+        static size_t GetValueNeedLen(const std::string& value);
+
     private:
         size_t m_KeySectionSize;
         size_t m_DataSectionSize;
         friend class BlockStructure_NormalTest;
-        friend struct CppUnit::Asserter;
-        //friend void CppUnit::Asserter::failIf(bool, const Message&, const SourceLine&);
     };
 }
 

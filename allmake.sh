@@ -1,2 +1,2 @@
-cd ~/work/code/duoduo/ddlib/ && make && cd .. && make
+cd essential/ && make && cd ../ddlib/ && make && cd .. && make
 cd ~/work/code/duoduo/

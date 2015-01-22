@@ -12,6 +12,7 @@
 
 using namespace DuoDuo;
 
+/*
 static BlockStructure_Normal static_BlockStructure_Normal(Config::Ins().ssd_block_size());
 static BlockStructure_Big static_BlockStructure_Big(Config::Ins().ssd_block_size());
 static BlockStructure_DataOnly static_BlockStructure_DataOnly(Config::Ins().ssd_block_size());
@@ -42,17 +43,28 @@ BlockStructure* BlockStructure::SelectStructure(const std::string& block)
 {
     return &static_BlockStructure_Normal;
 }
+*/
 
-void BlockStructure::InitBlock(std::string& block) const
+BlockStructure* BlockStructure::Create(std::string& block, BlockType blockType)
 {
-    assert_check(block.empty(), "BlockStructure_Normal::InitBlock");
-    block.resize(m_BlockSize);
-    InitHead(block);
+    switch (blockType)
+    {
+        case BlockStructure::eBlockType_Normal: return new BlockStructure_Normal(block);
+        case BlockStructure::eBlockType_Big: return new BlockStructure_Big(block);
+        case BlockStructure::eBlockType_DataOnly: return new BlockStructure_DataOnly(block);
+        default: assert_check(false, "BlockStructure::Create BlockType default");
+    }
+    return NULL;
 }
 
-void BlockStructure::InitHead(std::string& block) const
+void BlockStructure::InitBlock(void) const
 {
-    block[2] = m_BlockType;
+    InitHead();
+}
+
+void BlockStructure::InitHead(void) const
+{
+    m_Block[2] = m_BlockType;
 }
 
 size_t BlockStructure:: HeadSize(void) const

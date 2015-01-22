@@ -10,7 +10,8 @@ namespace DuoDuo
     class BlockStructure_DataOnly : public BlockStructure
     {
     public:
-        BlockStructure_DataOnly(size_t blockSize) : BlockStructure(BlockStructure::eBlockType_DataOnly, blockSize) {}
+        BlockStructure_DataOnly(std::string& block) :
+            BlockStructure(block, BlockStructure::eBlockType_DataOnly) {}
     };
 }
 

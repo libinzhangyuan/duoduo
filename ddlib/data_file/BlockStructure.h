@@ -17,17 +17,17 @@ namespace DuoDuo
             eBlockType_DataOnly = 3
         };
 
-        BlockStructure(BlockStructure::BlockType blockType, size_t blockSize) :
-            m_BlockType(blockType), m_BlockSize(blockSize) {}
+        BlockStructure(std::string& block, BlockStructure::BlockType blockType) :
+            m_Block(block), m_BlockType(blockType), m_BlockSize(block.size()) {}
         virtual ~BlockStructure(void) {}
 
-        static BlockStructure* SelectStructure(const std::string& key, const std::string& value);
-        static BlockStructure* SelectStructure(BlockType blockType, size_t blockSize);
-        static BlockStructure* SelectStructure(const std::string& block); // block is truly data in a file block.
+        //static BlockStructure* SelectStructure(const std::string& key, const std::string& value);
+        static BlockStructure* Create(std::string& block, BlockType blockType);
+        //static BlockStructure* SelectStructure(const std::string& block); // block is truly data in a file block.
 
         BlockType Type(void) {return m_BlockType;}
 
-        virtual void InitBlock(std::string& block) const;
+        virtual void InitBlock(void) const;
         //virtual bool IsEnoughForData(const std::string& block, const std::string& key, const std::string& value) const = 0;
         //virtual void AppendData(std::string& block, const std::string& key, const std::string& value) = 0;
 
@@ -41,9 +41,10 @@ namespace DuoDuo
     protected:
         size_t HeadSize(void) const;
     private:
-        void InitHead(std::string& block) const;
+        void InitHead(void) const;
 
     private:
+        std::string& m_Block;
         BlockType m_BlockType;
         size_t m_BlockSize;
     };

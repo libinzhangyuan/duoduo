@@ -5,12 +5,13 @@
 
 using namespace DuoDuo;
 
-BlockStructure_Normal::BlockStructure_Normal(size_t blockSize)
-    : BlockStructure(BlockStructure::eBlockType_Normal, blockSize)
+BlockStructure_Normal::BlockStructure_Normal(std::string& block)
+    : BlockStructure(block, BlockStructure::eBlockType_Normal)
     , m_KeySectionSize(0)
     , m_DataSectionSize(0)
 {
     size_t ratio = Config::Ins().normal_block_key_ratio_to_16();
+    size_t blockSize = block.size();
     m_KeySectionSize = ( (blockSize >> 4) * ratio - HeadSize() );
     m_DataSectionSize = ( (blockSize >> 4) * (16 - ratio) );
 }

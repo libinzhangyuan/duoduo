@@ -36,9 +36,10 @@ void BlockStructure_NormalTest::test_create()
 
 void BlockStructure_NormalTest::test_InitBlock()
 {
-    BlockStructure_Normal normal(4096);
     std::string block;
-    normal.InitBlock(block);
+    block.resize(4096);
+    BlockStructure_Normal normal(block);
+    normal.InitBlock();
     CPPUNIT_ASSERT(block.size() == Config::Ins().ssd_block_size());
     CPPUNIT_ASSERT(block[0] == '\0');
     CPPUNIT_ASSERT(block[1] == '\0');
@@ -49,12 +50,16 @@ void BlockStructure_NormalTest::test_InitBlock()
 
 void BlockStructure_NormalTest::test_KeySectionSize()
 {
-    BlockStructure_Normal normal(4096);
+    std::string block;
+    block.resize(4096);
+    BlockStructure_Normal normal(block);
     CPPUNIT_ASSERT(normal.KeySectionSize() == 1276); // (4096 * 5 / 16) - 4
 }
 
 void BlockStructure_NormalTest::test_DataSectionSize()
 {
-    BlockStructure_Normal normal(4096);
+    std::string block;
+    block.resize(4096);
+    BlockStructure_Normal normal(block);
     CPPUNIT_ASSERT(normal.DataSectionSize() == 2816); // (4096 * 11 / 16)
 }

@@ -12,6 +12,8 @@ namespace DuoDuo
     class DataBlock
     {
     public:
+        ~DataBlock(void);
+
         static std::vector<DataBlock> CreateDataBlocks(const std::string& key, const std::string& value);
         static DataBlock CreateEmptyNormalBlock(void);
 
@@ -21,12 +23,17 @@ namespace DuoDuo
         void AppendData(const std::string& key, const std::string& value);
         bool IsBigData(const std::string& key, const std::string& value) const;
 
+    protected:
+
     private:
         DataBlock(void);
 
+        BlockStructure& GetBlockStructure(void);
+        const BlockStructure& GetBlockStructure(void) const;
+
     private:
         std::string m_Block;
-        BlockStructure::BlockType m_BlockStructureType;
+        BlockStructure* m_pBlockStructure;
     };
 }
 

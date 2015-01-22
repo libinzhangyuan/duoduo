@@ -15,7 +15,7 @@ namespace DuoDuo
     {
     public:
 
-        BlockStructure_Normal(size_t blockSize);
+        BlockStructure_Normal(std::string& block);
         ~BlockStructure_Normal(void) {}
 
         virtual bool IsEnoughForData(const std::string& block, const std::string& key, const std::string& value) const;

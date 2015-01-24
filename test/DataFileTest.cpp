@@ -8,6 +8,7 @@
 CPPUNIT_TEST_SUITE_REGISTRATION( DataFileTest );
 
 using namespace DuoDuo;
+//using namespace Essential;
 
 void DataFileTest::setUp()
 {

@@ -2,6 +2,7 @@
 #define DUO_BLOCK_STRUCTURE_H_
 
 #include <string>
+#include <binary_stream/binary_buf.hpp>
 #include "../typedef.h"
 
 namespace DuoDuo
@@ -9,6 +10,7 @@ namespace DuoDuo
     class BlockStructure
     {
     public:
+        typedef uint16_t pos_in_block_t;  // position in one block
         enum BlockType
         {
             eBlockType_None = 0,
@@ -17,7 +19,7 @@ namespace DuoDuo
             eBlockType_DataOnly = 3
         };
 
-        BlockStructure(std::string& block, BlockStructure::BlockType blockType) :
+        BlockStructure(block_t& block, BlockStructure::BlockType blockType) :
             m_Block(block), m_BlockType(blockType), m_BlockSize(block.size()) {}
         virtual ~BlockStructure(void) {}
 
@@ -28,8 +30,8 @@ namespace DuoDuo
         BlockType Type(void) {return m_BlockType;}
 
         virtual void InitBlock(void) const;
-        //virtual bool IsEnoughForData(const std::string& block, const std::string& key, const std::string& value) const = 0;
-        //virtual void AppendData(std::string& block, const std::string& key, const std::string& value) = 0;
+        //virtual bool IsEnoughForData(const block_t& block, const std::string& key, const std::string& value) const = 0;
+        //virtual void AppendData(block_t& block, const std::string& key, const std::string& value) = 0;
 
         //struct LoadDataRst
         //{

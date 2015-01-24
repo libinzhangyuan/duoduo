@@ -10,6 +10,7 @@
 CPPUNIT_TEST_SUITE_REGISTRATION( BlockStructureTest );
 
 using namespace DuoDuo;
+using namespace Essential;
 
 void BlockStructureTest::setUp()
 {

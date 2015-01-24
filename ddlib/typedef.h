@@ -7,6 +7,7 @@
 namespace DuoDuo
 {
     typedef off_t f_offset;
+    typedef std::string block_t;
 }
 
 #endif

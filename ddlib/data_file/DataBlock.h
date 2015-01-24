@@ -32,8 +32,8 @@ namespace DuoDuo
         const BlockStructure& GetBlockStructure(void) const;
 
     private:
-        std::string m_Block;
-        BlockStructure* m_pBlockStructure;
+        block_t m_Block;
+        BlockStructure* m_pBlockStructure; // strategy
     };
 }
 

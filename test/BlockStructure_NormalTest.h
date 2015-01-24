@@ -14,6 +14,8 @@ class BlockStructure_NormalTest : public CPPUNIT_NS::TestFixture
   CPPUNIT_TEST( test_DataSectionSize );
   CPPUNIT_TEST( test_GetKeyNeedLen );
   CPPUNIT_TEST( test_GetValueNeedLen );
+  CPPUNIT_TEST( test_MakeKeyBuffer );
+  CPPUNIT_TEST( test_MakeDeletedKeyBuffer );
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -27,6 +29,8 @@ public:
   void test_DataSectionSize();
   void test_GetKeyNeedLen();
   void test_GetValueNeedLen();
+  void test_MakeKeyBuffer();
+  void test_MakeDeletedKeyBuffer();
 };
 
 #endif  // _BLOCK_STRUCTURE_TEST_H_

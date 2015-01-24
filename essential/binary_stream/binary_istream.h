@@ -1,12 +1,11 @@
 #pragma once
-#include "../config.h"
+#include "../es_config.h"
 
 #include <assert.h>
-#include <string>
 
-#include "boost/type_traits/is_fundamental.hpp"
-#include "boost/type_traits/is_pod.hpp"
-#include "boost/mpl/assert.hpp"
+//#include "boost/type_traits/is_fundamental.hpp"
+//#include "boost/type_traits/is_pod.hpp"
+//#include "boost/mpl/assert.hpp"
 
 #include "binary_stream_def.h"
 #include "check_function.h"
@@ -26,6 +25,8 @@ BEGIN_ES_NAMESPACE
 
 	public:
 
+        ::std::string Unpack(int sizeToUnpack);
+
 		// 从流中读出数据, 读取位置由m_ReadPos指定
 		// 任何情况下都会将pBuf清空(按照所给的bufSizeInBytes大小),再写数据. 
 		// 当读取失败时(剩余数据不够所想要的大小, 或用户指定的buf比想读取的字节数小), throw异常 or assert
@@ -37,25 +38,23 @@ BEGIN_ES_NAMESPACE
 		template <class unpack_type>
 			unpack_type Unpack(void);
 
-		template <>
-			::std::string Unpack(void) { // 最前面4个字节以int存储长度,后面紧跟内容.
+			::std::string UnpackString(void) { // 最前面4个字节以int存储长度,后面紧跟内容.
 				::std::string dst;
 				UnpackString(dst);
 				return dst;
 			}
 
-		template <>
-			::std::wstring Unpack(void)	{ // 最前面4个字节以int存储长度,后面紧跟内容.
+			::std::wstring UnpackWString(void)	{ // 最前面4个字节以int存储长度,后面紧跟内容.
 				::std::string dst;
 				UnpackString(dst);
 				return ::std::wstring(reinterpret_cast<const wchar_t *>(dst.c_str()), dst.size() / sizeof(wchar_t));
 			}
 
-		template <>
-			buf_type Unpack(void)	{
-				::std::string rstStr = Unpack<::std::string>(); // 是将buf当作::std::string进行存储的.
-				return buf_type(rstStr.c_str(), rstStr.size());
-			}
+		//template <>
+		//	buf_type Unpack(void)	{
+		//		::std::string rstStr = Unpack<::std::string>(); // 是将buf当作::std::string进行存储的.
+		//		return buf_type(rstStr.c_str(), rstStr.size());
+		//	}
 
 	public:
 
@@ -120,6 +119,23 @@ BEGIN_ES_NAMESPACE
 	// **********************************************************************************************
 	//
 	template <class buf_type, check_fuction istream_check>
+        ::std::string _binary_istream<buf_type, istream_check>::Unpack(int sizeToUnpack)
+        {
+            if (sizeToUnpack < 1024) 
+            {
+                char buf[1024] = "";
+                Unpack(buf, sizeToUnpack, sizeToUnpack);
+                return ::std::string(buf);
+            }
+            else
+            {
+                char* buf = new char(sizeToUnpack + 1);
+                Unpack(buf, sizeToUnpack, sizeToUnpack);
+                return ::std::string(buf);
+            }
+        }
+
+	template <class buf_type, check_fuction istream_check>
 		void _binary_istream<buf_type, istream_check>::Unpack(char* pBuf, int bufSizeInBytes, int sizeToCpy)
 		{
 			Read(pBuf, bufSizeInBytes, sizeToCpy);
@@ -131,10 +147,10 @@ BEGIN_ES_NAMESPACE
 			unpack_type _binary_istream<buf_type, istream_check>::Unpack(void)
 			{
 				// 下面这句限制只有POD类型, 但它没有限制到指针
-				BOOST_MPL_ASSERT_MSG(boost::is_pod<unpack_type>::value, obj_type_is_not_pod_type, (unpack_type));
+				//BOOST_MPL_ASSERT_MSG(boost::is_pod<unpack_type>::value, obj_type_is_not_pod_type, (unpack_type));
 
 				// 下面这句限制指针.
-				BOOST_MPL_ASSERT_MSG(!(boost::is_pointer<unpack_type>::value), obj_type_is_not_pod_type, (unpack_type));
+				//BOOST_MPL_ASSERT_MSG(!(boost::is_pointer<unpack_type>::value), obj_type_is_not_pod_type, (unpack_type));
 
 				// to do : 对于结构体或类里面使用的指针,还没有限制到.
 				// mpl_assert(pointer in struct or class);
@@ -203,14 +219,14 @@ BEGIN_ES_NAMESPACE
 			assert(pBuf != NULL); // 故意保留原始的assert, 因为这种情况肯定是写错代码了.
 			do_check(istream_check, bufSizeInBytes >= 0, "");
 
-			memset(pBuf, NULL, bufSizeInBytes);
+			memset(pBuf, 0, bufSizeInBytes);
 
 			do_check(istream_check, (readPos >= 0) && (readPos <= EndPos()), "readPos exceed the bound of buf");
 			do_check(istream_check, (sizeToRead >= 0) && ((readPos + sizeToRead) <= EndPos()), "read exceed the bound of buf!");
 			do_check(istream_check, sizeToRead <= bufSizeInBytes, "dst buf is smaller than cpySize");
 
 			const char* pReadBuf = m_ReadBuf.c_str();
-			memcpy_s(pBuf, sizeToRead, &pReadBuf[readPos], sizeToRead);
+			memcpy(pBuf, &pReadBuf[readPos], sizeToRead);
 		}
 
 	template <class buf_type, check_fuction istream_check>
@@ -218,7 +234,7 @@ BEGIN_ES_NAMESPACE
 		read_type _binary_istream<buf_type, istream_check>::Read(int readPos) const
 		{
 			// 下面这句限制只有原生类型(int,char,DWORD等)才能调用Read接口.
-			BOOST_MPL_ASSERT_MSG(boost::is_fundamental<read_type>::value, obj_type_is_not_original_type, (read_type));
+			//BOOST_MPL_ASSERT_MSG(boost::is_fundamental<read_type>::value, obj_type_is_not_original_type, (read_type));
 
 			read_type buf;
 			Read(reinterpret_cast<char*>(&buf), sizeof(read_type), readPos, sizeof(read_type));

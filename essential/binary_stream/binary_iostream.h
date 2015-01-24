@@ -1,5 +1,5 @@
 #pragma once
-#include "../config.h"
+#include "../es_config.h"
 #include "binary_istream.h"
 #include "binary_ostream.h"
 

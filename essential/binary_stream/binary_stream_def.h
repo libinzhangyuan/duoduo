@@ -1,5 +1,6 @@
 #pragma once
-#include "../config.h"
+#include <string.h>
+#include "../es_config.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // 这个头文件是binary_stream系统所需要(但使用者并不需要)的公共定义文件
@@ -14,7 +15,14 @@ BEGIN_ES_NAMESPACE
 	class bin_stream_exception : public ::std::exception
 	{
 	public:
-		bin_stream_exception(const char *const& _What) : ::std::exception(_What) {}
+		bin_stream_exception(const char *const& _What)
+        {
+            strlcpy(m_What, _What, sizeof(m_What));
+        }
+        ~bin_stream_exception() _NOEXCEPT {}
+
+    private:
+        char m_What[1024];
 	};
 
 END_ES_NAMESPACE

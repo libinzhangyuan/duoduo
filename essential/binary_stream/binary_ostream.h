@@ -1,10 +1,10 @@
 #pragma once
-#include "../config.h"
+#include "../es_config.h"
 #include <assert.h>
 
-#include "boost/type_traits/is_fundamental.hpp"
-#include "boost/type_traits/is_pod.hpp"
-#include "boost/mpl/assert.hpp"
+//#include "boost/type_traits/is_fundamental.hpp"
+//#include "boost/type_traits/is_pod.hpp"
+//#include "boost/mpl/assert.hpp"
 
 #include "binary_stream_def.h"
 #include "check_function.h"
@@ -36,21 +36,14 @@ BEGIN_ES_NAMESPACE
 		template <class pack_type>
 			int Pack(const pack_type& buf);
 
-		template <>
-			int Pack(const ::std::string& str) {
-				return PackString(str);
-			}
+		int PackString(const ::std::string& str) {
+			return PackString(str);
+		}
 
-		template <>
-			int Pack(const ::std::wstring& wstr) {
-				::std::string str(reinterpret_cast<const char *>(wstr.c_str()), wstr.size() * sizeof(wchar_t));
-				return PackString(str);
-			}
-
-		template <>
-			int Pack(const buf_type& buf)	{
-				return Pack(::std::string(buf.c_str(), buf.size())); // 将buf当作::std::string进行pack
-			}
+		int PackWString(const ::std::wstring& wstr) {
+			::std::string str(reinterpret_cast<const char *>(wstr.c_str()), wstr.size() * sizeof(wchar_t));
+			return PackString(str);
+		}
 
 	public:
 		int GetWritePos(void);
@@ -76,7 +69,7 @@ BEGIN_ES_NAMESPACE
 
 		void ResizeBuf(int newSize);
 
-		int PackString(const ::std::string& buf);
+		int _PackString(const ::std::string& buf);
 
 	private:
 		buf_type& m_WriteBuf; // 知道关系。
@@ -99,10 +92,10 @@ BEGIN_ES_NAMESPACE
 			int _binary_ostream<buf_type, ostream_check>::Pack(const pack_type& buf)
 			{
 				// 下面这句限制只有POD类型, 但它没有限制到指针
-				BOOST_MPL_ASSERT_MSG(boost::is_pod<pack_type>::value, obj_type_is_not_pod_type, (pack_type));
+				//BOOST_MPL_ASSERT_MSG(boost::is_pod<pack_type>::value, obj_type_is_not_pod_type, (pack_type));
 
 				// 下面这句限制指针.
-				BOOST_MPL_ASSERT_MSG(!(boost::is_pointer<pack_type>::value), obj_type_is_not_pod_type, (pack_type));
+				//BOOST_MPL_ASSERT_MSG(!(boost::is_pointer<pack_type>::value), obj_type_is_not_pod_type, (pack_type));
 
 				// to do : 对于结构体或类里面使用的指针,还没有限制到.
 				// mpl_assert(pointer in struct or class);
@@ -128,7 +121,7 @@ BEGIN_ES_NAMESPACE
 		}
 
 	template<class buf_type, check_fuction ostream_check>	
-		int _binary_ostream<buf_type, ostream_check>::PackString( const ::std::string& str )
+		int _binary_ostream<buf_type, ostream_check>::_PackString( const ::std::string& str )
 		{
 			Pack<int>((int)str.size());
 			return Pack(str.c_str(), (int)str.size());

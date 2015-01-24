@@ -1,11 +1,11 @@
 #pragma once
-#include "../config.h"
+#include "../es_config.h"
 
 #include <string>
 #include <ostream>
 #include <istream>
+#include <assert.h>
 #include "../utility/strUtil.h"
-
 class archive_normal;
 
 BEGIN_ES_NAMESPACE
@@ -45,6 +45,9 @@ BEGIN_ES_NAMESPACE
 		// 头四个字节(size_t)是定义大小的
 		// 返回pStr中被读取了多少位置(offset)
 		inline size_t LoadFromString_FrontIsSize(const char* pStr);
+
+        inline std::string to_std_string(void) const;
+        inline std::string to_cstyle_str(void) const;
 
 		inline size_t size(void) const;
 		inline void resize(size_t _Newsize);
@@ -134,6 +137,15 @@ BEGIN_ES_NAMESPACE
 		return is;
 	}
 
+    inline ::std::string _binary_buf::to_std_string(void) const
+    {
+        return m_Str;
+    }
+
+    inline ::std::string _binary_buf::to_cstyle_str(void) const
+    {
+        return ConvertToCStyleStr(m_Str);
+    }
 
 
 	inline _binary_buf& _binary_buf::operator = (_binary_buf& b) 
@@ -249,6 +261,7 @@ BEGIN_ES_NAMESPACE
 	inline _binary_buf& _binary_buf::append(const _binary_buf& _Right,	size_t _Roff, size_t _Count) // append _Right [_Roff, _Roff + _Count)
 	{
 		m_Str.append(_Right.m_Str, _Roff, _Count);
+        return *this;
 	}
 
 	inline _binary_buf& _binary_buf::append(const char *_Ptr, size_t _Count) 
@@ -319,6 +332,7 @@ BEGIN_ES_NAMESPACE
 	inline _binary_buf& _binary_buf::erase(size_t _Off /* = 0 */, size_t _Count /* = size_t(0) */)
 	{
 		m_Str.erase(_Off, _Count);
+        return *this;
 	}
 
 	inline void _binary_buf::clear(void) 
@@ -328,33 +342,32 @@ BEGIN_ES_NAMESPACE
 
 	inline bool _binary_buf::LoadFromFile( const ::std::string& fullPathName ) 
 	{
-		FILE *hFile = NULL;
 		clear();
 
-		errno_t err = fopen_s(&hFile, fullPathName.c_str(), "rb");
-		if (err != 0)
-			return false;
-		if (hFile == NULL)
+		FILE* f = fopen(fullPathName.c_str(), "rb");
+		if (f == NULL)
 			return false;
 
 		for (;;)
 		{
-			char readBuf[1024] = "";
-			int readCount = (int)fread(readBuf, 1, sizeof(readBuf), hFile);
+			char readBuf[1024 * 10] = "";
+			int readCount = (int)fread(readBuf, 1, sizeof(readBuf), f);
 			if (readCount == 0)
 				break;
 
 			append(readBuf, readCount);
 		}
 
-		fclose(hFile);
+		fclose(f);
 		return true;
 	}
 
 	inline size_t _binary_buf::LoadFromString_FrontIsSize(const char* pStr)
 	{
+        assert(pStr != NULL);
+
 		size_t nSize = 0;
-		memcpy_s(&nSize, sizeof(size_t), pStr, sizeof(size_t));
+		memcpy(&nSize, pStr, sizeof(size_t));
 
 		m_Str.assign(pStr + sizeof(size_t), nSize);
 		return nSize + sizeof(size_t);

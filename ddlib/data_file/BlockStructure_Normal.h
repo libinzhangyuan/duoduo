@@ -19,8 +19,9 @@ namespace DuoDuo
         BlockStructure_Normal(block_t& block);
         ~BlockStructure_Normal(void) {}
 
-        virtual bool IsEnoughForData(const block_t& block, const std::string& key, const std::string& value) const;
-        virtual void AppendData(block_t& block, const std::string& key, const std::string& value);
+        virtual bool IsEnoughForData(const std::string& key, const std::string& value) const;
+        virtual void AddData(const std::string& key, const std::string& value);
+        //virtual void LoadFromBlock(void);
 
     private:
         typedef pos_in_block_t data_pos_t;
@@ -28,6 +29,20 @@ namespace DuoDuo
 
         size_t KeySectionSize(void) const;
         size_t DataSectionSize(void) const;
+
+        size_t KeySection_BodySize(void) const;
+        //size_t KeySection_BodyUsedCount(void) const;
+        size_t KeySection_BodyUsedCount_Except(const std::string& key) const;
+
+        size_t DataSection_BodySize(void) const;
+        //size_t DataSection_BodyUsedCount(void) const;
+        size_t DataSection_BodyUsedCount_Except(const std::string& key) const;
+
+
+        bool IsEnoughForKeySection(const std::string& key) const;
+        bool IsEnoughForDataSection(const std::string& key, const std::string& value) const;
+
+        void AddDataToKeyValueMap(const std::string& key, const std::string& value);
 
         static size_t GetKeyNeedLen(const std::string& key);
         static size_t GetValueNeedLen(const std::string& value);
@@ -38,6 +53,7 @@ namespace DuoDuo
         size_t m_KeySectionSize;
         size_t m_DataSectionSize;
         friend class BlockStructure_NormalTest;
+        key_value_map_t m_KeyValues;
     };
 }
 

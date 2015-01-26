@@ -30,8 +30,8 @@ namespace DuoDuo
         BlockType Type(void) {return m_BlockType;}
 
         virtual void InitBlock(void) const;
-        //virtual bool IsEnoughForData(const block_t& block, const std::string& key, const std::string& value) const = 0;
-        //virtual void AppendData(block_t& block, const std::string& key, const std::string& value) = 0;
+        //virtual bool IsEnoughForData(const std::string& key, const std::string& value) const = 0;
+        //virtual void AddData(const std::string& key, const std::string& value) = 0;
 
         //struct LoadDataRst
         //{

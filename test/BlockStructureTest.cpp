@@ -1,10 +1,15 @@
 // db_imp_test.cpp
 
 #include <cppunit/config/SourcePrefix.h>
-#include <data_file/BlockStructure.h>
 #include "BlockStructureTest.h"
 #include <Util.h>
 #include <check_function.h>
+
+#define private public
+#define protected public
+#include <data_file/BlockStructure.h>
+#undef private
+#undef protected
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( BlockStructureTest );
@@ -28,7 +33,7 @@ void BlockStructureTest::test_constructor()
 
 void BlockStructureTest::test_create()
 {
-    std::string block;
+    block_t block;
     block.resize(4096);
     CPPUNIT_ASSERT(BlockStructure::Create(block, BlockStructure::eBlockType_Normal) != NULL);
     CPPUNIT_ASSERT(BlockStructure::Create(block, BlockStructure::eBlockType_Normal)->Type() == BlockStructure::eBlockType_Normal);
@@ -41,6 +46,19 @@ void BlockStructureTest::test_create()
 
     CPPUNIT_ASSERT_THROW(BlockStructure::Create(block, BlockStructure::eBlockType_None), AssertException);
 }
+
+void BlockStructureTest::test_CleanBody()
+{
+    block_t block;
+    block.resize(4096);
+    BlockStructure* pBlockStruct = BlockStructure::Create(block, BlockStructure::eBlockType_Normal);
+    CPPUNIT_ASSERT(pBlockStruct != NULL);
+    block[1024] = '2';
+    CPPUNIT_ASSERT(block[1024] == '2');
+    pBlockStruct->CleanBody();
+    CPPUNIT_ASSERT(block[1024] == 0);
+}
+
 
 /*
 void BlockStructureTest::test_SelectStructure_by_blockType(void)

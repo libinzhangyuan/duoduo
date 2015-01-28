@@ -39,13 +39,13 @@ BlockStructure* BlockStructure::SelectStructure(BlockType blockType, size_t bloc
     return NULL;
 }
 
-BlockStructure* BlockStructure::SelectStructure(const std::string& block)
+BlockStructure* BlockStructure::SelectStructure(const block_t& block)
 {
     return &static_BlockStructure_Normal;
 }
 */
 
-BlockStructure* BlockStructure::Create(std::string& block, BlockType blockType)
+BlockStructure* BlockStructure::Create(block_t& block, BlockType blockType)
 {
     switch (blockType)
     {
@@ -67,7 +67,19 @@ void BlockStructure::InitHead(void) const
     m_Block[2] = m_BlockType;
 }
 
-size_t BlockStructure:: HeadSize(void) const
+BlockStructure::BlockType BlockStructure::GetBlockTypeFromBlock(void) const
+{
+    return BlockStructure::BlockType(m_Block[2]);
+}
+
+size_t BlockStructure::HeadSize(void) const
 {
     return 4;
+}
+
+void BlockStructure::CleanBody(void)
+{
+    const size_t oldSize = m_Block.size();
+    m_Block.resize(HeadSize());
+    m_Block.resize(oldSize);
 }

@@ -25,7 +25,7 @@ BEGIN_ES_NAMESPACE
 
 	public:
 
-        ::std::string Unpack(int sizeToUnpack);
+    ::std::string Unpack(int sizeToUnpack);
 
 		// 从流中读出数据, 读取位置由m_ReadPos指定
 		// 任何情况下都会将pBuf清空(按照所给的bufSizeInBytes大小),再写数据. 
@@ -38,17 +38,17 @@ BEGIN_ES_NAMESPACE
 		template <class unpack_type>
 			unpack_type Unpack(void);
 
-			::std::string UnpackString(void) { // 最前面4个字节以int存储长度,后面紧跟内容.
-				::std::string dst;
+		::std::string UnpackString(void) { // 最前面4个字节以int存储长度,后面紧跟内容.
+	   		::std::string dst;
 				UnpackString(dst);
 				return dst;
-			}
+		}
 
-			::std::wstring UnpackWString(void)	{ // 最前面4个字节以int存储长度,后面紧跟内容.
+		::std::wstring UnpackWString(void)	{ // 最前面4个字节以int存储长度,后面紧跟内容.
 				::std::string dst;
 				UnpackString(dst);
 				return ::std::wstring(reinterpret_cast<const wchar_t *>(dst.c_str()), dst.size() / sizeof(wchar_t));
-			}
+		}
 
 		//template <>
 		//	buf_type Unpack(void)	{
@@ -58,6 +58,7 @@ BEGIN_ES_NAMESPACE
 
 	public:
 
+    int LeftBytes(void) const {return EndPos() - GetReadPos();}
 		int GetReadPos(void) const;
 
 		// 设置读取点. 必须是buf的有效内容范围内,否则抛异常.

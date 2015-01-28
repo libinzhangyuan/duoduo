@@ -14,7 +14,7 @@ namespace DuoDuo
     {
         typedef uint16_t key_count_t;
         typedef uint16_t key_len_t;
-        typedef uint16_t data_section_used_size_t;
+        typedef uint16_t data_body_section_used_count_t;
         typedef uint16_t data_len_t;
         typedef char key_check_num_t;
         typedef char data_check_num_t;
@@ -25,18 +25,50 @@ namespace DuoDuo
 
 }
 
+namespace DuoDuo // StructCalc
+{
+    size_t BlockStructure_Normal::StructCalc::DataSection_BodySize(void) const
+    {
+        return DataSectionSize() - sizeof(NormalBlock::data_body_section_used_count_t);
+    }
+
+    BlockStructure::pos_in_block_t BlockStructure_Normal::StructCalc::DataSection_BodyStartPos(void) const
+    {
+        return HeadSize() + KeySectionSize() + DataSectionHeadSize();
+    }
+
+    size_t BlockStructure_Normal::StructCalc::KeySection_BodySize(void) const
+    {
+        return KeySectionSize() - sizeof(NormalBlock::key_count_t);
+    }
+
+    size_t BlockStructure_Normal::StructCalc::KeySectionSize(void) const
+    {
+        size_t ratio = Config::Ins().normal_block_key_ratio_to_16();
+        return (m_BlockSize >> 4) * ratio - HeadSize();
+    }
+
+    size_t BlockStructure_Normal::StructCalc::DataSectionSize(void) const
+    {
+        size_t ratio = Config::Ins().normal_block_key_ratio_to_16();
+        return (m_BlockSize >> 4) * (16 - ratio);
+    }
+
+    size_t BlockStructure_Normal::StructCalc::DataSectionHeadSize(void) const
+    {
+        return sizeof(NormalBlock::data_body_section_used_count_t);
+    }
+}
+
+
+
 //Setting data pos to 0 to indicating this 'key/value' is deleted.
 const BlockStructure_Normal::data_pos_t BlockStructure_Normal::DATA_POS_OF_DELETE_IDENTITY = 0;
 
-BlockStructure_Normal::BlockStructure_Normal(std::string& block)
+BlockStructure_Normal::BlockStructure_Normal(block_t& block)
     : BlockStructure(block, BlockStructure::eBlockType_Normal)
-    , m_KeySectionSize(0)
-    , m_DataSectionSize(0)
+    , m_StructCalc(block.size())
 {
-    size_t ratio = Config::Ins().normal_block_key_ratio_to_16();
-    size_t blockSize = block.size();
-    m_KeySectionSize = ( (blockSize >> 4) * ratio - HeadSize() );
-    m_DataSectionSize = ( (blockSize >> 4) * (16 - ratio) );
 }
 
 bool BlockStructure_Normal::IsEnoughForData(const std::string& key, const std::string& value) const
@@ -52,7 +84,7 @@ bool BlockStructure_Normal::IsEnoughForKeySection(const std::string& key) const
     //  count bytes need of new key.
     sum += GetKeyNeedLen(key);
     //  check
-    return sum <= KeySection_BodySize();
+    return sum <= StructCalc(BlockSize()).KeySection_BodySize();
 }
 
 bool BlockStructure_Normal::IsEnoughForDataSection(const std::string& key, const std::string& value) const
@@ -62,7 +94,7 @@ bool BlockStructure_Normal::IsEnoughForDataSection(const std::string& key, const
     // count bytes need of new value.
     sum += GetValueNeedLen(value);
     // check
-    return sum <= DataSection_BodySize();
+    return sum <= StructCalc(BlockSize()).DataSection_BodySize();
 }
 
 size_t BlockStructure_Normal::KeySection_BodyUsedCount_Except(const std::string& key) const
@@ -80,6 +112,81 @@ size_t BlockStructure_Normal::KeySection_BodyUsedCount_Except(const std::string&
         sum += GetKeyNeedLen(tmpkey);
     }
     return sum;
+}
+
+void BlockStructure_Normal::LoadFromBlock(void)
+{
+    // check head
+    assert_check(GetBlockTypeFromBlock() == BlockStructure::eBlockType_Normal, "BlockStructure_Normal::LoadFromBlock : check head");
+
+    Essential::_binary_istream<Essential::_binary_buf> key_section_stream(GetBlock());
+
+    // key_section_stream:  move head
+    key_section_stream.MoveReadPos(HeadSize());
+
+    // key count
+    const NormalBlock::key_count_t key_count = key_section_stream.Unpack<NormalBlock::key_count_t>();
+
+    // each key and data
+    for (size_t i = 0; i < key_count; ++i)
+    {
+        data_pos_t data_pos;
+        const std::string& key = GetKey(key_section_stream, data_pos);
+        exception_assert(data_pos >= StructCalc(BlockSize()).DataSection_BodyStartPos(), "NormalBlock Load: data_pos too small");
+        // todo: data_pos == 0 means this key is deleted.
+        const std::string& value = GetValue(data_pos);
+        AddDataToKeyValueMap(key, value);
+    }
+}
+
+std::string BlockStructure_Normal::GetKey(Essential::_binary_istream<Essential::_binary_buf>& key_stream, data_pos_t& data_pos)
+{
+    // key len
+    exception_assert(sizeof(NormalBlock::key_len_t) < key_stream.LeftBytes(), "NormalBlock GetKey: keyLen out of range");
+    const NormalBlock::key_len_t key_length = key_stream.Unpack<NormalBlock::key_len_t>();
+    exception_assert(key_length > 0, "NormalBlock Load: key length must > 0");
+
+    // data pos
+    exception_assert(sizeof(data_pos_t) < key_stream.LeftBytes(), "NormalBlock GetKey: dataPos out of range");
+    data_pos = key_stream.Unpack<data_pos_t>();
+
+    // key
+    exception_assert(key_length < key_stream.LeftBytes(), "NormalBlock GetKey: key out of range");
+    const std::string& key = key_stream.Unpack(key_length);
+
+    // check num
+    exception_assert(sizeof(char) < key_stream.LeftBytes(), "NormalBlock GetKey: cknum out of range");
+    const char cknum = key_stream.Unpack<char>();
+    exception_assert(cknum == NormalBlock::KEY_CHECK_NUM, "NormalBlock Load: keyCkNum wrong!");
+
+    return key;
+}
+
+std::string BlockStructure_Normal::GetValue(Essential::_binary_istream<Essential::_binary_buf>& value_stream)
+{
+    // value len
+    exception_assert(sizeof(NormalBlock::data_len_t) < value_stream.LeftBytes(), "NormalBlock GetValue: valueLen out of range");
+    const NormalBlock::data_len_t value_len = value_stream.Unpack<NormalBlock::data_len_t>();
+    exception_assert(value_len < value_stream.LeftBytes(), "NormalBlock Load: data len too large");
+
+    // value
+    const std::string& value = value_stream.Unpack(value_len);
+
+    // check num
+    const char value_cknum = value_stream.Unpack<char>();
+    exception_assert(value_cknum == NormalBlock::DATA_CHECK_NUM, "NormalBlock Load: valueCkNum wrong!");
+
+    return value;
+}
+
+std::string BlockStructure_Normal::GetValue(const data_pos_t& data_pos) const
+{
+    Essential::_binary_istream<Essential::_binary_buf> data_body_stream(GetBlock());
+
+    exception_assert((data_pos + sizeof(NormalBlock::data_len_t)) < GetBlock().size(), "NormalBlock get value: value len out of range!");
+    data_body_stream.SetReadPos(data_pos);
+
+    return BlockStructure_Normal::GetValue(data_body_stream);
 }
 
 void BlockStructure_Normal::AddDataToKeyValueMap(const std::string& key, const std::string& value)
@@ -109,21 +216,60 @@ void BlockStructure_Normal::AddData(const std::string& key, const std::string& v
 {
     // checking enough for data
     // if finding key in  m_KeyValues
-    //     remove key/value from m_KeyValues
+    //     change key/value to new one
     //     remake the entire block
+    //     return
     // end
     // add to m_KeyValues
     // add to block
 }
 
-size_t BlockStructure_Normal::KeySectionSize(void) const
+void BlockStructure_Normal::PackBlock(void)
 {
-    return m_KeySectionSize;
+    CleanBody();
+
+    Essential::_binary_ostream<Essential::_binary_buf> bfstream(GetBlock());
+
+    // head
+    bfstream.MoveWritePos(HeadSize());
+
+    // key count
+    bfstream.Pack<NormalBlock::key_count_t>(m_KeyValues.size());
+
+    // key section body
+    const KeyDataBodyResult& key_and_data_body = MakeKeySectionBodyAndDataSectionBody(m_KeyValues);
+    assert_check(key_and_data_body.key_section_body.size() <= m_StructCalc.KeySection_BodySize(), "BlockStructure_Normal::PackBlock");
+    bfstream.Pack(key_and_data_body.key_section_body.c_str(), key_and_data_body.key_section_body.size());
+
+    // data body section used count
+    bfstream.Pack<NormalBlock::data_body_section_used_count_t>(key_and_data_body.data_section_body.size());
+
+    // data section body
+    assert_check(key_and_data_body.data_section_body.size() <= m_StructCalc.DataSection_BodySize(), "BlockStructure_Normal::PackBlock");
+    bfstream.Pack(key_and_data_body.data_section_body.c_str(), key_and_data_body.data_section_body.size());
 }
 
-size_t BlockStructure_Normal::DataSectionSize(void) const
+BlockStructure_Normal::KeyDataBodyResult BlockStructure_Normal::MakeKeySectionBodyAndDataSectionBody(const key_value_map_t& key_values) const
 {
-    return m_DataSectionSize;
+    BlockStructure_Normal::KeyDataBodyResult result;
+    Essential::_binary_ostream<Essential::_binary_buf> key_body_stream(result.key_section_body);
+    Essential::_binary_ostream<Essential::_binary_buf> data_body_stream(result.data_section_body);
+    for (key_value_map_t::const_iterator iter = key_values.begin(); iter != key_values.end(); ++iter)
+    {
+        const std::string& tmpkey = iter->first;
+        const std::string& tmpvalue = iter->second;
+        const unsigned int tmpvalue_start_pos = data_body_stream.GetWritePos();
+        data_pos_t tmpvalue_pos_in_block = StructCalc(BlockSize()).DataSection_BodyStartPos() + tmpvalue_start_pos;
+
+        // pack key
+        const Essential::_binary_buf& keyBuff = MakeKeyBuffer(tmpkey, tmpvalue_pos_in_block);
+        key_body_stream.Pack(keyBuff.c_str(), keyBuff.size());
+
+        // pack value
+        const Essential::_binary_buf& valueBuff = MakeValueBuffer(tmpvalue);
+        data_body_stream.Pack(valueBuff.c_str(), valueBuff.size());
+    }
+    return result;
 }
 
 size_t BlockStructure_Normal::GetKeyNeedLen(const std::string& key)
@@ -156,12 +302,11 @@ Essential::_binary_buf BlockStructure_Normal::MakeDeletedKeyBuffer(const std::st
     return MakeKeyBuffer(key, DATA_POS_OF_DELETE_IDENTITY);
 }
 
-size_t BlockStructure_Normal::KeySection_BodySize(void) const
+Essential::_binary_buf BlockStructure_Normal::MakeValueBuffer(const std::string& value)
 {
-    return KeySectionSize() - sizeof(NormalBlock::key_count_t);
-}
-
-size_t BlockStructure_Normal::DataSection_BodySize(void) const
-{
-    return DataSectionSize() - sizeof(NormalBlock::data_section_used_size_t);
+    Essential::_binary_buf buffer;
+    Essential::_binary_ostream<Essential::_binary_buf> bfstream(buffer);
+    bfstream.Pack<NormalBlock::data_len_t>(value.size());
+    bfstream.Pack(value.c_str(), value.size());
+    return buffer;
 }

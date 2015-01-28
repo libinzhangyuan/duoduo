@@ -24,8 +24,8 @@ namespace DuoDuo
         virtual ~BlockStructure(void) {}
 
         //static BlockStructure* SelectStructure(const std::string& key, const std::string& value);
-        static BlockStructure* Create(std::string& block, BlockType blockType);
-        //static BlockStructure* SelectStructure(const std::string& block); // block is truly data in a file block.
+        static BlockStructure* Create(block_t& block, BlockType blockType);
+        //static BlockStructure* SelectStructure(const block_t& block); // block is truly data in a file block.
 
         BlockType Type(void) {return m_BlockType;}
 
@@ -42,11 +42,17 @@ namespace DuoDuo
 
     protected:
         size_t HeadSize(void) const;
+        void CleanBody(void);
+        BlockType GetBlockTypeFromBlock(void) const;
+        block_t& GetBlock(void) {return m_Block;}
+        const block_t& GetBlock(void) const {return m_Block;}
+        const size_t BlockSize(void) const {return m_Block.size();}
+
     private:
         void InitHead(void) const;
 
     private:
-        std::string& m_Block;
+        block_t& m_Block;
         BlockType m_BlockType;
         size_t m_BlockSize;
     };

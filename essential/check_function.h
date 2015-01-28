@@ -49,6 +49,7 @@ private:
 		if (!condition)
 		{
 			::std::string msg = make_check_message(expression, fileName, line, message);
+            printf("%s", msg.c_str());
 			throw exception_type(msg.c_str());
 		}
 	}

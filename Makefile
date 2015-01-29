@@ -59,18 +59,18 @@
 MY_CFLAGS = -std=c++98
 
 # The linker options.
-MY_LIBS   = /usr/local/lib/libcppunit.a ddlib/ddlib.a essential/essential.a
+MY_LIBS   = cppunit-1.12.1/src/cppunit/.libs/libcppunit.a ddlib/ddlib.a essential/essential.a
 
 # The pre-processor options used by the cpp (man cpp for more).
 #CPPFLAGS  = -Wall -I essential -I ddlib
-CPPFLAGS  = -Wall -I essential -I ddlib -D _UTEST_
+CPPFLAGS  = -Wall -I essential -I cppunit-1.12.1/include -I ddlib -D _UTEST_
 
 # The options used in linking as well as in any direct use of ld.
 LDFLAGS   =
 
 # The directories in which source files reside.
 # If not specified, only the current directory will be serached.
-SRCDIRS   = ./ ./test /usr/local/include
+SRCDIRS   = ./ ./test
 
 # The executable file name.
 # If not specified, current directory name or `a.out' will be used.

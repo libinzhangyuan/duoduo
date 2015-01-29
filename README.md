@@ -29,13 +29,10 @@
 
 #### Install cppunit
 *   download from http://nchc.dl.sourceforge.net/project/cppunit/cppunit/1.12.1/cppunit-1.12.1.tar.gz
-*   unpack it. 
+*   unpack it. cp cppunit-1.12.1 folder to the folder of duoduo project. 
 *   $ cd cppunit-1.12.1
 *   $ ./configure
 *   $ make
-*   $ make check
-*   $ make install
-*   $ cp cppunit /usr/include/
 
 #### Compile
 *   $ cd essential

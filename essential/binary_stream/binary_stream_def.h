@@ -20,7 +20,12 @@ BEGIN_ES_NAMESPACE
             strncpy(m_What, _What, sizeof(m_What));
             m_What[1023] = 0;
         }
+
+#ifdef _MAC_OS_COMPILE_
+        ~bin_stream_exception() _NOEXCEPT {}
+#else
         ~bin_stream_exception() _GLIBCXX_USE_NOEXCEPT {}
+#endif
 
     private:
         char m_What[1024];

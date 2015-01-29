@@ -17,7 +17,11 @@ class AssertException : public ::std::exception
 {
 public:
 	AssertException(const char *const& _What) : m_What(_What) {}
+#ifdef _MAC_OS_COMPILE_
+    ~AssertException() _NOEXCEPT {}
+#else
     ~AssertException() _GLIBCXX_USE_NOEXCEPT {}
+#endif
 private:
     std::string m_What;
 };

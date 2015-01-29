@@ -5,7 +5,9 @@
 #include <ostream>
 #include <istream>
 #include <assert.h>
-#include "../utility/strUtil.h"
+#include <stdio.h>
+#include <string.h>
+#include "../utility/strutil.h"
 class archive_normal;
 
 BEGIN_ES_NAMESPACE

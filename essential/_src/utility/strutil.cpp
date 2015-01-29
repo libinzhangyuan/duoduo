@@ -1,6 +1,8 @@
-#include "../../utility/strutil.h"
 #include <assert.h>
+#include <stdlib.h>
+#include <string.h>
 #include "../../check_function.h"
+#include "../../utility/strutil.h"
 
 BEGIN_ES_NAMESPACE
 

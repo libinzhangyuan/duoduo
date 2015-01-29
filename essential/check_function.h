@@ -2,6 +2,7 @@
 #define _CHECK_FUNCTION_H_
 #include <exception>
 #include <string>
+#include <stdio.h>
 #include "es_config.h"
 
 BEGIN_ES_NAMESPACE
@@ -16,7 +17,7 @@ class AssertException : public ::std::exception
 {
 public:
 	AssertException(const char *const& _What) : m_What(_What) {}
-    ~AssertException() _NOEXCEPT {}
+    ~AssertException() _GLIBCXX_USE_NOEXCEPT {}
 private:
     std::string m_What;
 };

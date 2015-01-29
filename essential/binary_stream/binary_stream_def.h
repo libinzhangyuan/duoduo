@@ -17,9 +17,10 @@ BEGIN_ES_NAMESPACE
 	public:
 		bin_stream_exception(const char *const& _What)
         {
-            strlcpy(m_What, _What, sizeof(m_What));
+            strncpy(m_What, _What, sizeof(m_What));
+            m_What[1023] = 0;
         }
-        ~bin_stream_exception() _NOEXCEPT {}
+        ~bin_stream_exception() _GLIBCXX_USE_NOEXCEPT {}
 
     private:
         char m_What[1024];

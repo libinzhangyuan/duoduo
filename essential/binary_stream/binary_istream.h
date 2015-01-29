@@ -58,7 +58,7 @@ BEGIN_ES_NAMESPACE
 
 	public:
 
-    int LeftBytes(void) const {return EndPos() - GetReadPos();}
+        size_t LeftBytes(void) const {return EndPos() - GetReadPos();}
 		int GetReadPos(void) const;
 
 		// 设置读取点. 必须是buf的有效内容范围内,否则抛异常.

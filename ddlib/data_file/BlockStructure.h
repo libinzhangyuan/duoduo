@@ -2,6 +2,7 @@
 #define DUO_BLOCK_STRUCTURE_H_
 
 #include <string>
+#include <stdint.h>
 #include <binary_stream/binary_buf.hpp>
 #include "../typedef.h"
 

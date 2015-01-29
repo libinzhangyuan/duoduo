@@ -1,4 +1,5 @@
 // db_imp_test.cpp
+#include <cstdlib>
 
 #include <cppunit/config/SourcePrefix.h>
 #include <data_file/DataFile.h>

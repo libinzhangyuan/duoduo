@@ -1,3 +1,4 @@
+#include <exception>
 #include "../check_function.h"
 
 namespace Essential

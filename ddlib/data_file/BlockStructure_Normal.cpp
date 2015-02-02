@@ -155,7 +155,7 @@ std::string BlockStructure_Normal::GetKey(Essential::_binary_istream<Essential::
     const std::string& key = key_stream.Unpack(key_length);
 
     // check num
-    exception_assert(sizeof(char) < key_stream.LeftBytes(), "NormalBlock GetKey: cknum out of range");
+    exception_assert(sizeof(char) <= key_stream.LeftBytes(), "NormalBlock GetKey: cknum out of range");
     const char cknum = key_stream.Unpack<char>();
     exception_assert(cknum == NormalBlock::KEY_CHECK_NUM, "NormalBlock Load: keyCkNum wrong!");
 

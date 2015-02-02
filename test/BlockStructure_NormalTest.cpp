@@ -8,12 +8,14 @@
 #include <Config.h>
 #include <check_function.h>
 
+#include "test_def.h"
 #define private public
 #define protected public
 #include <data_file/BlockStructure.h>
 #include <data_file/BlockStructure_Normal.h>
 #undef private
 #undef protected
+
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( BlockStructure_NormalTest );
@@ -45,7 +47,7 @@ void BlockStructure_NormalTest::test_InitBlock()
     block.resize(4096);
     BlockStructure_Normal normal(block);
     normal.InitBlock();
-    CPPUNIT_ASSERT(block.size() == Config::Ins().ssd_block_size());
+    CPPUNIT_ASSERT(block.size() == static_cast<size_t>(Config::Ins().ssd_block_size()));
     CPPUNIT_ASSERT(block[0] == '\0');
     CPPUNIT_ASSERT(block[1] == '\0');
     CPPUNIT_ASSERT(block[2] == BlockStructure::eBlockType_Normal);
@@ -330,6 +332,7 @@ void BlockStructure_NormalTest::test_GetKey()
         ostrm.Pack<BlockStructure_Normal::data_pos_t>(234);
         ostrm.Pack("1234567890", 10);
         ostrm.Pack<char>(char(0xF1));
+        ostrm.Pack("otherdata", sizeof("otherdata"));
 
         Essential::_binary_istream<Essential::_binary_buf> istrm(block);
         BlockStructure_Normal::data_pos_t dataPos = -1;

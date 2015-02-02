@@ -63,7 +63,7 @@ MY_LIBS   = cppunit-1.12.1/src/cppunit/.libs/libcppunit.a ddlib/ddlib.a essentia
 
 # The pre-processor options used by the cpp (man cpp for more).
 #CPPFLAGS  = -Wall -I essential -I ddlib
-CPPFLAGS  = -Wall -I essential -I cppunit-1.12.1/include -I ddlib -D _UTEST_
+CPPFLAGS  = -Wall -I essential -I cppunit-1.12.1/include -I ddlib -D _UTEST_ -g
 
 # The options used in linking as well as in any direct use of ld.
 LDFLAGS   =

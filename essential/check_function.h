@@ -13,17 +13,17 @@ BEGIN_ES_NAMESPACE
     #define assert_check(condition, message) Essential::_assert_check((condition), (#condition), (__FILE__), __LINE__, (message))
 #endif
 
-class AssertException : public ::std::exception
+class AssertException
 {
 public:
-	AssertException(const char *const& _What) : m_What(_What) {}
-#ifdef _MAC_OS_COMPILE_
-    ~AssertException() _NOEXCEPT {}
-#else
-    ~AssertException() _GLIBCXX_USE_NOEXCEPT {}
-#endif
+    AssertException(const char *const& _What)
+    {
+        strncpy(m_What, _What, sizeof(m_What));
+        m_What[1023] = 0;
+    }
+    ~AssertException() {}
 private:
-    std::string m_What;
+    char m_What[1024];
 };
 
 #define exception_assert(condition, message) Essential::_excption_check<Essential::AssertException>((condition), (#condition), (__FILE__), __LINE__, (message))

@@ -12,7 +12,7 @@
 
 BEGIN_ES_NAMESPACE
 
-	class bin_stream_exception : public ::std::exception
+	class bin_stream_exception
 	{
 	public:
 		bin_stream_exception(const char *const& _What)
@@ -21,11 +21,7 @@ BEGIN_ES_NAMESPACE
             m_What[1023] = 0;
         }
 
-#ifdef _MAC_OS_COMPILE_
-        ~bin_stream_exception() _NOEXCEPT {}
-#else
-        ~bin_stream_exception() _GLIBCXX_USE_NOEXCEPT {}
-#endif
+        ~bin_stream_exception() {}
 
     private:
         char m_What[1024];

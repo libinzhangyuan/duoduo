@@ -449,12 +449,12 @@ void BlockStructure_NormalTest::test_PackAndLoad()
         block_t block;
         block.resize(128);
         BlockStructure_Normal normal(block);
-        normal.AddData("1", "12345678901234567890"); // key_body: 6, data_body: 23
-        normal.AddData("2", "123456789012345678901234567890"); // key_body: 6, data_body: 33
-        CPPUNIT_ASSERT_THROW(normal.AddData("123456789012345678", "2342"), Essential::AssertException);
-        normal.AddData("12345678901234567", ""); // key_body: 22, data_body: 3
-        CPPUNIT_ASSERT_THROW(normal.AddData("4", "2342"), Essential::AssertException);
-        normal.AddData("1", "1234567890123456789"); // key_body: 6, data_body: 23
+        normal.AddDataToKeyValueMap("1", "12345678901234567890"); // key_body: 6, data_body: 23
+        normal.AddDataToKeyValueMap("2", "123456789012345678901234567890"); // key_body: 6, data_body: 33
+        CPPUNIT_ASSERT_THROW(normal.AddDataToKeyValueMap("123456789012345678", "2342"), Essential::AssertException);
+        normal.AddDataToKeyValueMap("12345678901234567", ""); // key_body: 22, data_body: 3
+        CPPUNIT_ASSERT_THROW(normal.AddDataToKeyValueMap("4", "2342"), Essential::AssertException);
+        normal.AddDataToKeyValueMap("1", "1234567890123456789"); // key_body: 6, data_body: 23
 
         normal.PackBlock();
 

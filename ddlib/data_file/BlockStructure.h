@@ -48,12 +48,12 @@ namespace DuoDuo
         block_t& GetBlock(void) {return m_Block;}
         const block_t& GetBlock(void) const {return m_Block;}
         const size_t BlockSize(void) const {return m_Block.size();}
-
-    private:
         void InitHead(void) const;
+        block_t& m_Block;
 
     private:
-        block_t& m_Block;
+
+    private:
         BlockType m_BlockType;
         size_t m_BlockSize;
     };

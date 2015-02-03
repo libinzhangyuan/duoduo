@@ -24,12 +24,18 @@ DataFile* DataFile::Create(const std::string& folder, const std::string& name)
         if (access(folder.c_str(), S_IRUSR) == -1)
         {
             if (mkdir(folder.c_str(), S_IRWXU) == -1)
+            {
+                error_log("\n ERROR: create folder fail!\n");
                 return NULL;
+            }
         }
 
         // folder exist but access mode doesn't right
         if (access(folder.c_str(), S_IRWXU) == -1)
+        {
+            error_log("\nERROR: folder exist but access mode doesn't right!\n");
             return NULL;
+        }
     }
 
     // try to open file || create file if not exist.
@@ -38,7 +44,7 @@ DataFile* DataFile::Create(const std::string& folder, const std::string& name)
     int fd = open(filename.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     if (fd == -1)
     {
-        printf("errno: %d %s\n", errno, strerror(errno));
+        error_log("errno: open file fail: %s : %d %s\n", filename.c_str(), errno, strerror(errno));
         return NULL;
     }
 

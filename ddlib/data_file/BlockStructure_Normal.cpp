@@ -186,7 +186,7 @@ std::string BlockStructure_Normal::GetValue(const data_pos_t& data_pos) const
     exception_assert((data_pos + sizeof(NormalBlock::data_len_t)) < GetBlock().size(), "NormalBlock get value: value len out of range!");
     data_body_stream.SetReadPos(data_pos);
 
-    return BlockStructure_Normal::GetValue(data_body_stream);
+    return DuoDuo::BlockStructure_Normal::GetValue(data_body_stream);
 }
 
 void BlockStructure_Normal::AddDataToKeyValueMap(const std::string& key, const std::string& value)
@@ -228,10 +228,11 @@ void BlockStructure_Normal::PackBlock(void)
 {
     CleanBody();
 
-    Essential::_binary_ostream<Essential::_binary_buf> bfstream(GetBlock());
+    Essential::_binary_ostream<Essential::_binary_buf> bfstream(m_Block);
 
     // head
-    bfstream.MoveWritePos(HeadSize());
+    InitHead();
+    bfstream.SetWritePos(HeadSize());
 
     // key count
     bfstream.Pack<NormalBlock::key_count_t>(m_KeyValues.size());
@@ -308,5 +309,6 @@ Essential::_binary_buf BlockStructure_Normal::MakeValueBuffer(const std::string&
     Essential::_binary_ostream<Essential::_binary_buf> bfstream(buffer);
     bfstream.Pack<NormalBlock::data_len_t>(value.size());
     bfstream.Pack(value.c_str(), value.size());
+    bfstream.Pack<char>(NormalBlock::DATA_CHECK_NUM);
     return buffer;
 }

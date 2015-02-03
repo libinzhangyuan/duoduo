@@ -222,6 +222,28 @@ void BlockStructure_Normal::AddData(const std::string& key, const std::string& v
     // end
     // add to m_KeyValues
     // add to block
+
+
+    // checking enough for data
+    assert_check(IsEnoughForData(key, value), "BlockStructure_Normal::AddData");
+
+    // if finding key in  m_KeyValues
+    //     change key/value to new one
+    //     remake the entire block
+    //     return
+    // end
+    if (m_KeyValues.find(key) != m_KeyValues.end())
+    {
+        AddDataToKeyValueMap(key, value);
+        PackBlock();
+        return;
+    }
+
+    // add to m_KeyValues
+    AddDataToKeyValueMap(key, value);
+    // add to block
+    PackBlock(); // todo: change code to append new key && value.
+    return;
 }
 
 void BlockStructure_Normal::PackBlock(void)

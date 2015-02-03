@@ -449,12 +449,12 @@ void BlockStructure_NormalTest::test_PackAndLoad()
         block_t block;
         block.resize(128);
         BlockStructure_Normal normal(block);
-        normal.AddDataToKeyValueMap("1", "12345678901234567890"); // key_body: 6, data_body: 23
-        normal.AddDataToKeyValueMap("2", "123456789012345678901234567890"); // key_body: 6, data_body: 33
-        CPPUNIT_ASSERT_THROW(normal.AddDataToKeyValueMap("123456789012345678", "2342"), Essential::AssertException);
-        normal.AddDataToKeyValueMap("12345678901234567", ""); // key_body: 22, data_body: 3
-        CPPUNIT_ASSERT_THROW(normal.AddDataToKeyValueMap("4", "2342"), Essential::AssertException);
-        normal.AddDataToKeyValueMap("1", "1234567890123456789"); // key_body: 6, data_body: 23
+        normal.AddData("1", "12345678901234567890"); // key_body: 6, data_body: 23
+        normal.AddData("2", "123456789012345678901234567890"); // key_body: 6, data_body: 33
+        CPPUNIT_ASSERT_THROW(normal.AddData("123456789012345678", "2342"), Essential::AssertException);
+        normal.AddData("12345678901234567", ""); // key_body: 22, data_body: 3
+        CPPUNIT_ASSERT_THROW(normal.AddData("4", "2342"), Essential::AssertException);
+        normal.AddData("1", "1234567890123456789"); // key_body: 6, data_body: 23
 
         normal.PackBlock();
 
@@ -465,4 +465,58 @@ void BlockStructure_NormalTest::test_PackAndLoad()
         CPPUNIT_ASSERT(normal2.m_KeyValues["2"] == std::string("123456789012345678901234567890"));
         CPPUNIT_ASSERT(normal2.m_KeyValues["12345678901234567"] == std::string(""));
     }
+}
+
+void BlockStructure_NormalTest::test_AddData()
+{
+    block_t block;
+    block.resize(128);
+    BlockStructure_Normal normal(block);
+    BlockStructure_Normal::StructCalc normal_calc(128);
+    CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 34); // (128 * 5 / 16) - 4 - 2
+    CPPUNIT_ASSERT(normal_calc.DataSection_BodySize() == 86); // (128 * 11 / 16) - 2
+
+    // normal
+    {
+        normal.AddData("1", "12345678901234567890"); // key_body: 6, data_body: 23
+        normal.AddData("2", "123456789012345678901234567890"); // key_body: 6, data_body: 33
+
+        // value out of range
+        CPPUNIT_ASSERT_THROW(normal.AddData("v", "1234567890123456789012345678"), Essential::AssertException); //key_body: 6, data_body: 31
+
+        normal.AddData("12345678901234567", "123456789012345678901234567"); // key_body: 22, data_body: 30
+
+        // key out of range
+        CPPUNIT_ASSERT_THROW(normal.AddData("4", "2342"), Essential::AssertException);
+
+        BlockStructure_Normal normal2(block);
+        normal2.LoadFromBlock();
+        CPPUNIT_ASSERT(normal2.m_KeyValues.size() == 3);
+        CPPUNIT_ASSERT(normal2.m_KeyValues["1"] == std::string("12345678901234567890"));
+        CPPUNIT_ASSERT(normal2.m_KeyValues["2"] == std::string("123456789012345678901234567890"));
+        CPPUNIT_ASSERT(normal2.m_KeyValues["12345678901234567"] == std::string("123456789012345678901234567"));
+
+    }
+
+
+    // change value of one key
+    {
+        normal.AddData("1", "123456789012345678"); // key_body: 6, data_body: 21
+        normal.AddData("12345678901234567", ""); // key_body: 22, data_body: 3
+
+        BlockStructure_Normal normal2(block);
+        normal2.LoadFromBlock();
+        CPPUNIT_ASSERT(normal2.m_KeyValues.size() == 3);
+        CPPUNIT_ASSERT(normal2.m_KeyValues["1"] == std::string("123456789012345678"));
+        CPPUNIT_ASSERT(normal2.m_KeyValues["2"] == std::string("123456789012345678901234567890"));
+        CPPUNIT_ASSERT(normal2.m_KeyValues["12345678901234567"] == std::string(""));
+
+        // out of range
+    }
+
+
+    // delete one key/value
+    {
+    }
+
 }

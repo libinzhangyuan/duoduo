@@ -23,6 +23,7 @@ class BlockStructure_NormalTest : public CPPUNIT_NS::TestFixture
   CPPUNIT_TEST( test_GetValue );
   CPPUNIT_TEST( test_MakeKeySectionBodyAndDataSectionBody );
   CPPUNIT_TEST( test_PackAndLoad );
+  CPPUNIT_TEST( test_AddData );
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -45,6 +46,7 @@ public:
   void test_GetValue();
   void test_MakeKeySectionBodyAndDataSectionBody();
   void test_PackAndLoad();
+  void test_AddData();
 };
 
 #endif  // _BLOCK_STRUCTURE_TEST_H_

@@ -1,6 +1,6 @@
 零散的事:
-1. ddlib, essential编译开关: 加上dbg用调试信息
+-done 1. ddlib, essential编译开关: 加上dbg用调试信息
 2. 将test的makefile移到test中.
-3. 将allmake.sh等中路径相关部分去掉.
+-done 3. 将allmake.sh等中路径相关部分去掉.
 4. assert显示调用栈
 5. istream ostream库中的0d0a处理.

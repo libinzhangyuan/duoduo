@@ -21,6 +21,7 @@ namespace DuoDuo
         ~BlockStructure_Normal(void) {}
 
         virtual void LoadFromBlock(void);
+        virtual std::map<std::string /*key*/, pos_in_block_t> IndexFromBlock(void) const;
 
         virtual bool IsEnoughForData(const std::string& key, const std::string& value) const;
         virtual void AddData(const std::string& key, const std::string& value);

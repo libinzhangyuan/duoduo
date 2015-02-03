@@ -520,3 +520,35 @@ void BlockStructure_NormalTest::test_AddData()
     }
 
 }
+
+void BlockStructure_NormalTest::test_IndexFromBlock()
+{
+    block_t block;
+    block.resize(128);
+    BlockStructure_Normal normal(block);
+    BlockStructure_Normal::StructCalc normal_calc(128);
+    CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 34); // (128 * 5 / 16) - 4 - 2
+    CPPUNIT_ASSERT(normal_calc.DataSection_BodySize() == 86); // (128 * 11 / 16) - 2
+
+    // normal
+    {
+        normal.AddData("1", "12345678901234567890"); // key_body: 6, data_body: 23
+        normal.AddData("2", "123456789012345678901234567890"); // key_body: 6, data_body: 33
+        normal.AddData("12345678901234567", "123456789012345678901234567"); // key_body: 22, data_body: 30
+
+        std::map<std::string /*key*/, BlockStructure::pos_in_block_t> indexes = normal.IndexFromBlock();
+        BlockStructure::pos_in_block_t pos1 = indexes["1"];
+        std::string value1 = normal.GetValue(pos1);
+        CPPUNIT_ASSERT(value1 == std::string("12345678901234567890"));
+        BlockStructure::pos_in_block_t pos2 = indexes["2"];
+        CPPUNIT_ASSERT(normal.GetValue(pos2) == std::string("123456789012345678901234567890"));
+        BlockStructure::pos_in_block_t pos3 = indexes["12345678901234567"];
+        CPPUNIT_ASSERT(normal.GetValue(pos3) == std::string("123456789012345678901234567"));
+    }
+
+    // deleted key/value
+    {
+    }
+
+
+}

@@ -334,3 +334,31 @@ Essential::_binary_buf BlockStructure_Normal::MakeValueBuffer(const std::string&
     bfstream.Pack<char>(NormalBlock::DATA_CHECK_NUM);
     return buffer;
 }
+
+std::map<std::string /*key*/, BlockStructure::pos_in_block_t> BlockStructure_Normal::IndexFromBlock(void) const
+{
+    std::map<std::string /*key*/, pos_in_block_t> index;
+
+    // check head
+    assert_check(GetBlockTypeFromBlock() == BlockStructure::eBlockType_Normal, "BlockStructure_Normal::IndexFromBlock : check head");
+
+    Essential::_binary_istream<Essential::_binary_buf> key_section_stream(GetBlock());
+
+    // key_section_stream:  move head
+    key_section_stream.MoveReadPos(HeadSize());
+
+    // key count
+    const NormalBlock::key_count_t key_count = key_section_stream.Unpack<NormalBlock::key_count_t>();
+
+    // each key
+    for (size_t i = 0; i < key_count; ++i)
+    {
+        data_pos_t data_pos;
+        const std::string& key = GetKey(key_section_stream, data_pos);
+        exception_assert(data_pos >= StructCalc(BlockSize()).DataSection_BodyStartPos(), "NormalBlock Load: data_pos too small");
+        // todo: data_pos == 0 means this key is deleted.
+
+        index[key] = data_pos;
+    }
+    return index;
+}

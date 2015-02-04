@@ -17,6 +17,7 @@ namespace DuoDuo
             CachedBlock(void) {}
         private:
             //DataBlock* m_pCachedBlock;
+            block_index_t m_BlockIndexOfCachedNormalBlock;
         };
 
     public:

@@ -38,7 +38,7 @@ namespace DuoDuo // StructCalc
         return DataSectionSize() - sizeof(NormalBlock::data_body_section_used_count_t);
     }
 
-    BlockStructure::pos_in_block_t BlockStructure_Normal::StructCalc::DataSection_BodyStartPos(void) const
+    pos_in_block_t BlockStructure_Normal::StructCalc::DataSection_BodyStartPos(void) const
     {
         return HeadSize() + KeySectionSize() + DataSectionHeadSize();
     }
@@ -341,7 +341,7 @@ Essential::_binary_buf BlockStructure_Normal::MakeValueBuffer(const std::string&
     return buffer;
 }
 
-std::map<std::string /*key*/, BlockStructure::pos_in_block_t> BlockStructure_Normal::IndexFromBlock(void) const
+std::map<std::string /*key*/, pos_in_block_t> BlockStructure_Normal::IndexFromBlock(void) const
 {
     std::map<std::string /*key*/, pos_in_block_t> index;
 

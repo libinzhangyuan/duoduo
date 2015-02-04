@@ -11,7 +11,6 @@ namespace DuoDuo
     class BlockStructure
     {
     public:
-        typedef uint16_t pos_in_block_t;  // position in one block
         enum BlockType
         {
             eBlockType_None = 0,

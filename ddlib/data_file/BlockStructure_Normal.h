@@ -76,7 +76,7 @@ namespace DuoDuo
                 size_t DataSectionSize(void) const;
                 size_t DataSectionHeadSize(void) const;
                 size_t DataSection_BodySize(void) const;
-                BlockStructure::pos_in_block_t DataSection_BodyStartPos(void) const;
+                pos_in_block_t DataSection_BodyStartPos(void) const;
 
             private:
                 size_t m_BlockSize;

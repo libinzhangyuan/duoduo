@@ -346,6 +346,7 @@ void BlockStructure_NormalTest::test_GetKey()
         Essential::_binary_istream<Essential::_binary_buf> istrm(block);
         BlockStructure_Normal::data_pos_t dataPos = -1;
         CPPUNIT_ASSERT_CHECKING_THROW(BlockStructure_Normal::GetKey(istrm, dataPos));
+        dataPos = 1;
     }
 }
 
@@ -552,12 +553,12 @@ void BlockStructure_NormalTest::test_IndexFromBlock()
         normal.AddData("2", "123456789012345678901234567890"); // key_body: 6, data_body: 33
         normal.AddData("1234567890123", "123456789012345678901234567"); // key_body: 18, data_body: 30
 
-        std::map<std::string /*key*/, BlockStructure::pos_in_block_t> indexes = normal.IndexFromBlock();
-        BlockStructure::pos_in_block_t pos1 = indexes["1"];
+        std::map<std::string /*key*/, pos_in_block_t> indexes = normal.IndexFromBlock();
+        pos_in_block_t pos1 = indexes["1"];
         CPPUNIT_ASSERT(normal.GetValue(pos1) == std::string("12345678901234567890"));
-        BlockStructure::pos_in_block_t pos2 = indexes["2"];
+        pos_in_block_t pos2 = indexes["2"];
         CPPUNIT_ASSERT(normal.GetValue(pos2) == std::string("123456789012345678901234567890"));
-        BlockStructure::pos_in_block_t pos3 = indexes["1234567890123"];
+        pos_in_block_t pos3 = indexes["1234567890123"];
         CPPUNIT_ASSERT(normal.GetValue(pos3) == std::string("123456789012345678901234567"));
     }
 

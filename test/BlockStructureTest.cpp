@@ -8,7 +8,7 @@
 
 #define private public
 #define protected public
-#include <data_file/BlockStructure.h>
+#include <block/BlockStructure.h>
 #undef private
 #undef protected
 

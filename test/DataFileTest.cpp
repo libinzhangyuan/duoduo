@@ -2,7 +2,7 @@
 #include <cstdlib>
 
 #include <cppunit/config/SourcePrefix.h>
-#include <data_file/DataFile.h>
+#include <DataFile.h>
 #include "DataFileTest.h"
 
 #include "test_def.h"

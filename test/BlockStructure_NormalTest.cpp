@@ -11,8 +11,8 @@
 #include "test_def.h"
 #define private public
 #define protected public
-#include <data_file/BlockStructure.h>
-#include <data_file/BlockStructure_Normal.h>
+#include <block/BlockStructure.h>
+#include <block/BlockStructure_Normal.h>
 #undef private
 #undef protected
 

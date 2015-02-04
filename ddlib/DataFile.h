@@ -2,7 +2,7 @@
 #define DUO_DATA_FILE_H_
 
 #include <string>
-#include "../typedef.h"
+#include "typedef.h"
 
 class DataBlock;
 

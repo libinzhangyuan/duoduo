@@ -58,13 +58,13 @@ void BlockStructure_NormalTest::test_InitBlock()
 void BlockStructure_NormalTest::test_KeySectionSize()
 {
     BlockStructure_Normal::StructCalc normal_calc(4096);
-    CPPUNIT_ASSERT(normal_calc.KeySectionSize() == 1272); // (4096 * 5 / 16) - 8
+    CPPUNIT_ASSERT(normal_calc.KeySectionSize() == 1264); // (4096 * 5 / 16) - 16
 }
 
 void BlockStructure_NormalTest::test_KeySection_BodySize()
 {
     BlockStructure_Normal::StructCalc normal_calc(4096);
-    CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 1270);
+    CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 1262); // (4096 * 5 / 16) - 16 - 2
 }
 
 void BlockStructure_NormalTest::test_DataSectionSize()
@@ -145,11 +145,11 @@ void BlockStructure_NormalTest::test_IsEnoughForData()
         // key section sold out
         {
             block_t block;
-            block.resize(80);
+            block.resize(128);
             BlockStructure_Normal normal(block);
-            BlockStructure_Normal::StructCalc normal_calc(80);
-            CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 15); // (80 * 5 / 16) - 8 - 2
-            CPPUNIT_ASSERT(normal_calc.DataSection_BodySize() == 53); // (80 * 11 / 16) - 2
+            BlockStructure_Normal::StructCalc normal_calc(128);
+            CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 22); // (128 * 5 / 16) - 16 - 2
+            CPPUNIT_ASSERT(normal_calc.DataSection_BodySize() == 86); // (128 * 11 / 16) - 2
             std::string key1 = "1k3";
             std::string value1 = "1v34567890";
             size_t key1_needLen = BlockStructure_Normal::GetKeyNeedLen(key1);
@@ -158,29 +158,29 @@ void BlockStructure_NormalTest::test_IsEnoughForData()
             CPPUNIT_ASSERT(value1_needLen = 13);
 
             CPPUNIT_ASSERT(normal.IsEnoughForData(key1, value1) == true);
-            normal.AddDataToKeyValueMap(key1, value1);
+            normal.AddDataToKeyValueMap(key1, value1); // key used: 8
 
             // in boundary
             {
-                std::string key3 = "3k";
+                std::string key3 = "3k3456789";
                 size_t key3_needLen = BlockStructure_Normal::GetKeyNeedLen(key3);
-                CPPUNIT_ASSERT(key3_needLen == 7);
+                CPPUNIT_ASSERT(key3_needLen == 14);
                 std::string value3 = "2v34567890";
                 CPPUNIT_ASSERT(normal.IsEnoughForData(key3, value3) == true);
             }
 
             // out boundary
             {
-                std::string key4 = "3k3";
+                std::string key4 = "3k34567890";
                 size_t key4_needLen = BlockStructure_Normal::GetKeyNeedLen(key4);
-                CPPUNIT_ASSERT(key4_needLen == 8);
+                CPPUNIT_ASSERT(key4_needLen == 15);
                 std::string value4 = "2v34567890";
                 CPPUNIT_ASSERT(normal.IsEnoughForData(key4, value4) == false);
             }
 
             // duplication in one normalBlock
             {
-                normal.AddDataToKeyValueMap("5k", "23");
+                normal.AddDataToKeyValueMap("3k3456789", "23"); // key used: 14
                 CPPUNIT_ASSERT(normal.IsEnoughForData(key1, "new valuegasdfasdf") == true);
             }
         }
@@ -197,7 +197,7 @@ void BlockStructure_NormalTest::test_IsEnoughForData()
         // value is empty
         {
             block_t block;
-            block.resize(64);
+            block.resize(128);
             BlockStructure_Normal normal(block);
 
             std::string key3 = "3k";
@@ -211,11 +211,11 @@ void BlockStructure_NormalTest::test_IsEnoughForData()
         // key too large for a empty normalBlock
         {
             block_t block;
-            block.resize(64);
+            block.resize(128);
             BlockStructure_Normal normal(block);
 
-            CPPUNIT_ASSERT(normal.IsEnoughForData("12345", "gasdf") == true);
-            CPPUNIT_ASSERT(normal.IsEnoughForData("123456", "fdgs") == false);
+            CPPUNIT_ASSERT(normal.IsEnoughForData("12345678901234567", "gasdf") == true);
+            CPPUNIT_ASSERT(normal.IsEnoughForData("123456789012345678", "fdgs") == false);
         }
 
     } // end of test keySection
@@ -226,11 +226,11 @@ void BlockStructure_NormalTest::test_IsEnoughForData()
         // data section sold out
         {
             block_t block;
-            block.resize(80);
+            block.resize(128);
             BlockStructure_Normal normal(block);
-            BlockStructure_Normal::StructCalc normal_calc(80);
-            CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 15); // (80 * 5 / 16) - 8 - 2
-            CPPUNIT_ASSERT(normal_calc.DataSection_BodySize() == 53); // (80 * 11 / 16) - 2
+            BlockStructure_Normal::StructCalc normal_calc(128);
+            CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 22); // (128 * 5 / 16) - 16 - 2
+            CPPUNIT_ASSERT(normal_calc.DataSection_BodySize() == 86); // (128 * 11 / 16) - 2
 
             std::string key1 = "1";
             std::string value1 = "1v34567890";
@@ -240,34 +240,22 @@ void BlockStructure_NormalTest::test_IsEnoughForData()
             CPPUNIT_ASSERT(value1_needLen = 13);
 
             CPPUNIT_ASSERT(normal.IsEnoughForData(key1, value1) == true);
-            normal.AddDataToKeyValueMap(key1, value1);
+            normal.AddDataToKeyValueMap(key1, value1); // value used: 13
  
             // sold out
             {
                 std::string key2 = "2";
-                std::string value2 = "2v345678901234567890123456789012345678";  // valueNeedLen = 41
-                CPPUNIT_ASSERT(normal.IsEnoughForData(key2, value2) == false);
+                std::string value2 = "2v34567890223456789032345678904234567890523456789062345678907234567890";  // valueNeedLen = 73
+                std::string value3 = "2v345678902234567890323456789042345678905234567890623456789072345678901";  // valueNeedLen = 74
+                CPPUNIT_ASSERT(normal.IsEnoughForData(key2, value2) == true);
+                CPPUNIT_ASSERT(normal.IsEnoughForData(key2, value3) == false);
             }
 
             // duplication in one normalBlock
             {
                 std::string key2 = "1";
-                std::string value2 = "2v345678901234567890123456789012345678";  // valueNeedLen = 41
-                CPPUNIT_ASSERT(normal.IsEnoughForData(key2, value2) == true);
-            }
-
-            // in boundary
-            {
-                std::string key2 = "2";
-                std::string value2 = "2v3456789012345678901234567";  // valueNeedLen = 40
-                CPPUNIT_ASSERT(normal.IsEnoughForData(key2, value2) == true);
-            }
-
-            // out boundary
-            {
-                std::string key2 = "2";
-                std::string value2 = "2v345678901234567890123456789012345678";  // valueNeedLen = 41
-                CPPUNIT_ASSERT(normal.IsEnoughForData(key2, value2) == false);
+                std::string value3 = "2v345678902234567890323456789042345678905234567890623456789072345678901";  // valueNeedLen = 74
+                CPPUNIT_ASSERT(normal.IsEnoughForData(key2, value3) == true);
             }
         }
 
@@ -277,7 +265,7 @@ void BlockStructure_NormalTest::test_IsEnoughForData()
             block.resize(128);
             BlockStructure_Normal normal(block);
             BlockStructure_Normal::StructCalc normal_calc(128);
-            CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 30); // (128 * 5 / 16) - 8 - 2
+            CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 22); // (128 * 5 / 16) - 16 - 2
             CPPUNIT_ASSERT(normal_calc.DataSection_BodySize() == 86); // (128 * 11 / 16) - 2
 
             std::string value1 = "1v34567890"; // value need len: 13
@@ -298,13 +286,16 @@ void BlockStructure_NormalTest::test_IsEnoughForData()
         // value too large for a empty normalBlock
         {
             block_t block;
-            block.resize(64);
+            block.resize(80);
             BlockStructure_Normal normal(block);
+            BlockStructure_Normal::StructCalc normal_calc(80);
+            CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 7); // (80 * 5 / 16) - 16 - 2
+            CPPUNIT_ASSERT(normal_calc.DataSection_BodySize() == 53); // (80 * 11 / 16) - 2
 
             std::string key2 = "2";
-            std::string value2 = "2v3456789012345678901234567890123456789";  // keyNeedLen = 42
+            std::string value2 = "2v3456789012345678901234567890""12345678901234567890";  // valueNeedLen = 53
             CPPUNIT_ASSERT(normal.IsEnoughForData(key2, value2) == true);
-            std::string value3 = "2v34567890123456789012345678901234567890";  // keyNeedLen = 43
+            std::string value3 = "2v3456789012345678901234567890""123456789012345678901";  // valueNeedLen = 54
             CPPUNIT_ASSERT(normal.IsEnoughForData(key2, value3) == false);
         }
 
@@ -429,7 +420,7 @@ void BlockStructure_NormalTest::test_MakeKeySectionBodyAndDataSectionBody()
         block.resize(128);
         BlockStructure_Normal normal(block);
         BlockStructure_Normal::StructCalc normal_calc(128);
-        CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 30); // (128 * 5 / 16) - 8 - 2
+        CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 22); // (128 * 5 / 16) - 16 - 2
         CPPUNIT_ASSERT(normal_calc.DataSection_BodySize() == 86); // (128 * 11 / 16) - 2
         keyValues["1"] = "1234567890";
         keyValues["2"] = "123456";
@@ -458,13 +449,13 @@ void BlockStructure_NormalTest::test_PackAndLoad()
         block.resize(128);
         BlockStructure_Normal normal(block);
         BlockStructure_Normal::StructCalc normal_calc(128);
-        CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 30); // (128 * 5 / 16) - 8 - 2
+        CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 22); // (128 * 5 / 16) - 16 - 2
         CPPUNIT_ASSERT(normal_calc.DataSection_BodySize() == 86); // (128 * 11 / 16) - 2
 
         normal.AddData("1", "12345678901234567890"); // key_body: 6, data_body: 23
         normal.AddData("2", "123456789012345678901234567890"); // key_body: 6, data_body: 33
-        CPPUNIT_ASSERT_CHECKING_THROW(normal.AddData("12345678901234", "2342"));
-        normal.AddData("1234567890123", ""); // key_body: 22, data_body: 3
+        CPPUNIT_ASSERT_CHECKING_THROW(normal.AddData("123456", "2342")); // key_body: 11, data_body: 7
+        normal.AddData("12345", ""); // key_body: 10, data_body: 3
         CPPUNIT_ASSERT_CHECKING_THROW(normal.AddData("4", "2342"));
         normal.AddData("1", "1234567890123456789"); // key_body: 6, data_body: 23
 
@@ -475,7 +466,7 @@ void BlockStructure_NormalTest::test_PackAndLoad()
         CPPUNIT_ASSERT(normal2.m_KeyValues.size() == 3);
         CPPUNIT_ASSERT(normal2.m_KeyValues["1"] == std::string("1234567890123456789"));
         CPPUNIT_ASSERT(normal2.m_KeyValues["2"] == std::string("123456789012345678901234567890"));
-        CPPUNIT_ASSERT(normal2.m_KeyValues["1234567890123"] == std::string(""));
+        CPPUNIT_ASSERT(normal2.m_KeyValues["12345"] == std::string(""));
     }
 }
 
@@ -486,7 +477,7 @@ void BlockStructure_NormalTest::test_AddData()
         block.resize(128);
         BlockStructure_Normal normal(block);
         BlockStructure_Normal::StructCalc normal_calc(128);
-        CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 30); // (128 * 5 / 16) - 8 - 2
+        CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 22); // (128 * 5 / 16) - 16 - 2
         CPPUNIT_ASSERT(normal_calc.DataSection_BodySize() == 86); // (128 * 11 / 16) - 2
 
         // normal
@@ -501,7 +492,7 @@ void BlockStructure_NormalTest::test_AddData()
             CPPUNIT_ASSERT_CHECKING_THROW(normal.AddData("12345678901234", "123456789012345678901234567"));
 
             // in bundary
-            normal.AddData("1234567890123", "123456789012345678901234567"); // key_body: 18, data_body: 30
+            normal.AddData("12345", "123456789012345678901234567"); // key_body: 10, data_body: 30
 
             // key out of range
             CPPUNIT_ASSERT_CHECKING_THROW(normal.AddData("4", "2342"));
@@ -511,21 +502,21 @@ void BlockStructure_NormalTest::test_AddData()
             CPPUNIT_ASSERT(normal2.m_KeyValues.size() == 3);
             CPPUNIT_ASSERT(normal2.m_KeyValues["1"] == std::string("12345678901234567890"));
             CPPUNIT_ASSERT(normal2.m_KeyValues["2"] == std::string("123456789012345678901234567890"));
-            CPPUNIT_ASSERT(normal2.m_KeyValues["1234567890123"] == std::string("123456789012345678901234567"));
+            CPPUNIT_ASSERT(normal2.m_KeyValues["12345"] == std::string("123456789012345678901234567"));
         }
 
 
         // change value of one key
         {
             normal.AddData("1", "123456789012345678"); // key_body: 6, data_body: 21
-            normal.AddData("1234567890123", ""); // key_body: 22, data_body: 3
+            normal.AddData("12345", ""); // key_body: 10, data_body: 3
 
             BlockStructure_Normal normal2(block);
             normal2.LoadFromBlock();
             CPPUNIT_ASSERT(normal2.m_KeyValues.size() == 3);
             CPPUNIT_ASSERT(normal2.m_KeyValues["1"] == std::string("123456789012345678"));
             CPPUNIT_ASSERT(normal2.m_KeyValues["2"] == std::string("123456789012345678901234567890"));
-            CPPUNIT_ASSERT(normal2.m_KeyValues["12345678901234567"] == std::string(""));
+            CPPUNIT_ASSERT(normal2.m_KeyValues["12345"] == std::string(""));
 
             // out of range
         }
@@ -544,21 +535,21 @@ void BlockStructure_NormalTest::test_IndexFromBlock()
     block.resize(128);
     BlockStructure_Normal normal(block);
     BlockStructure_Normal::StructCalc normal_calc(128);
-    CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 30); // (128 * 5 / 16) - 8 - 2
+    CPPUNIT_ASSERT(normal_calc.KeySection_BodySize() == 22); // (128 * 5 / 16) - 16 - 2
     CPPUNIT_ASSERT(normal_calc.DataSection_BodySize() == 86); // (128 * 11 / 16) - 2
 
     // normal
     {
         normal.AddData("1", "12345678901234567890"); // key_body: 6, data_body: 23
         normal.AddData("2", "123456789012345678901234567890"); // key_body: 6, data_body: 33
-        normal.AddData("1234567890123", "123456789012345678901234567"); // key_body: 18, data_body: 30
+        normal.AddData("12345", "123456789012345678901234567"); // key_body: 10, data_body: 30
 
         std::map<std::string /*key*/, pos_in_block_t> indexes = normal.IndexFromBlock();
         pos_in_block_t pos1 = indexes["1"];
         CPPUNIT_ASSERT(normal.GetValue(pos1) == std::string("12345678901234567890"));
         pos_in_block_t pos2 = indexes["2"];
         CPPUNIT_ASSERT(normal.GetValue(pos2) == std::string("123456789012345678901234567890"));
-        pos_in_block_t pos3 = indexes["1234567890123"];
+        pos_in_block_t pos3 = indexes["12345"];
         CPPUNIT_ASSERT(normal.GetValue(pos3) == std::string("123456789012345678901234567"));
     }
 

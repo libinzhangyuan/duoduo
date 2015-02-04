@@ -13,4 +13,7 @@
     inline void __noop_(void) {}
 #endif
 
+#define CPPUNIT_ASSERT_CHECKING_THROW(condition) { CPPUNIT_ASSERT_THROW((condition), AssertException); }
+
+
 #endif // _DD_TEST_DEF_H__

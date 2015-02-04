@@ -4,6 +4,7 @@
 
 #include "../Util.h"
 #include "../Config.h"
+#include "../def.h"
 
 #include "BlockStructure.h"
 #include "BlockStructure_Normal.h"
@@ -74,7 +75,7 @@ BlockStructure::BlockType BlockStructure::GetBlockTypeFromBlock(void) const
 
 size_t BlockStructure::HeadSize(void) const
 {
-    return 4;
+    return DD_BLOCK_HEAD_SIZE;
 }
 
 void BlockStructure::CleanBody(void)

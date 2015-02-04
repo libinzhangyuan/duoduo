@@ -27,13 +27,16 @@ namespace Essential
         return ::std::string(showMessage);
     }
 
+    std::string _assert_check_printf_msg(const char* const expression, const char* const fileName, int line, const char* const message)
+    {
+        const std::string& msg = make_check_message(expression, fileName, line, message);
+        printf("%s", msg.c_str());
+        return msg;
+    }
 
     void do_assert(const char* const expression, const char* const fileName, int line, const char* const message)
     {
-        const std::string& msg = make_check_message(expression, fileName, line, message);
-
-        // log
-        printf("%s", msg.c_str());
+        const std::string& msg = _assert_check_printf_msg(expression, fileName, line, message);
 
         // throw exception
         throw AssertException(msg.c_str());

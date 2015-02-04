@@ -69,7 +69,7 @@ namespace DuoDuo
             public:
                 StructCalc(size_t block_size) : m_BlockSize(block_size) {}
 
-                size_t HeadSize(void) const {return 4;}
+                size_t HeadSize(void) const;
                 size_t KeySectionSize(void) const;
                 size_t KeySection_BodySize(void) const;
 

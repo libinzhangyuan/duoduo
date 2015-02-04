@@ -47,17 +47,17 @@ private:
 	void _assert_check( bool condition, const char* const expression, const char* const fileName, int line, const char* const message );
 
 
-	::std::string make_check_message(const char* const expression, const char* const fileName, int line, const char* const message);
+    std::string _assert_check_printf_msg(const char* const expression, const char* const fileName, int line, const char* const message);
 
 	template <class exception_type>
 	void _excption_check(bool condition, const char* const expression, const char* const fileName, int line, const char* const message) {
 		if (!condition)
 		{
-			::std::string msg = make_check_message(expression, fileName, line, message);
-            printf("%s", msg.c_str());
+            const std::string& msg = _assert_check_printf_msg(expression, fileName, line, message);
 			throw exception_type(msg.c_str());
 		}
 	}
+
 
 
 

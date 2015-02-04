@@ -1,4 +1,5 @@
 #include "../Config.h"
+#include "../def.h"
 
 #include <check_function.h>
 #include <binary_stream/binary_istream.h>
@@ -27,6 +28,11 @@ namespace DuoDuo
 
 namespace DuoDuo // StructCalc
 {
+    size_t BlockStructure_Normal::StructCalc::HeadSize(void) const
+    {
+        return DD_BLOCK_HEAD_SIZE;
+    }
+
     size_t BlockStructure_Normal::StructCalc::DataSection_BodySize(void) const
     {
         return DataSectionSize() - sizeof(NormalBlock::data_body_section_used_count_t);

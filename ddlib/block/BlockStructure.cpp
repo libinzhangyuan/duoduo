@@ -66,6 +66,7 @@ void BlockStructure::InitBlock(void) const
 void BlockStructure::InitHead(void) const
 {
     m_Block[2] = m_BlockType;
+    //m_Block.replace(BLOCK_INDEX_POS_IN_BLOCK, reinterpret_cast<const char *>(&block_index), sizeof(block_index_t));
 }
 
 BlockStructure::BlockType BlockStructure::GetBlockTypeFromBlock(void) const

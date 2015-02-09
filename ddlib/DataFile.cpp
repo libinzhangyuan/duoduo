@@ -9,8 +9,29 @@
 #include <check_function.h>
 #include "DataFile.h"
 #include "Util.h"
+#include "Config.h"
+#include "block/DataBlock.h"
 
 using namespace DuoDuo;
+
+namespace DuoDuo
+{
+    DataFile::LastUnfilledNormalBlock::LastUnfilledNormalBlock(size_t block_size)
+        : m_pNormalBlock(NULL), m_BlockIndex(-1)
+    {
+        m_pNormalBlock = DataBlock::CreateEmptyNormalBlock(block_size);
+    }
+
+    DataFile::LastUnfilledNormalBlock::~LastUnfilledNormalBlock()
+    {
+        if (m_pNormalBlock != NULL)
+        {
+            delete m_pNormalBlock;
+            m_pNormalBlock = NULL;
+        }
+    }
+
+}
 
 DataFile* DataFile::Create(const std::string& folder, const std::string& name)
 {
@@ -48,43 +69,80 @@ DataFile* DataFile::Create(const std::string& folder, const std::string& name)
         return NULL;
     }
 
-    return new DuoDuo::DataFile(folder, name_to_file_name(name), fd);
+    size_t block_size = Config::Ins().ssd_block_size();
+    return new DuoDuo::DataFile(folder, name_to_file_name(name), fd, block_size);
 }
 
-DataFile::DataFile(const std::string& folder, const std::string& filename, int fd)
+DataFile::DataFile(const std::string& folder, const std::string& filename, int fd, size_t block_size)
     : m_Folder(folder)
     , m_Filename(filename)
     , m_Fd(fd)
+    , m_LastUnfilledNormalBlock(block_size)
 {
     printf("\ncreate DataFile: %s %s\n", m_Folder.c_str(), m_Filename.c_str());
 }
 
-
 f_offset DataFile::AddData(const std::string& key, const std::string& value)
 {
-    // if is the big data.
-    //   create new blocks and save
-    //   remove same key,value in cached_block
-    //   return
-    //
-    // small data
-    // cached block enough for new data
-    //   append data to it
-    //if (m_pCachedBlock != NULL)
-    {
-    }
-
-    // cached block not enough
-    //     save cached block
-    //     create new blocks by new data
-    //     if last block need cache
-    //         cached it
-    //         save other new blocks
-    //     else
-    //         save all new blocks
-
-
     return 0;
+}
+
+// Save() will saving all unsaved data to file.
+// the small data will add to last unfilled normalBlock first.
+// And it will reset the last normalBlock.
+void DataFile::Save(void)
+{
+    //  if there are big data only
+    //      saving all big data.
+    //      return
+    //  end
+    //
+    //  // have small data
+    //  if there is lastUnfilledNormalBlock
+    //      old_lastUnfilledNormalBlock = lastUnfilledNormalBlock
+    //      data_PlaceIntoLastUnfilledNormalBlock = find(key that is not accur after lastUnfilledNormalBlock && the rest of block can pack it && the same key in lastUnfilledNormalBlock if prefer)
+    //      if data_PlaceIntoLastUnfilledNormalBlock is not empty
+    //          removing those small data from cachedkeyvalues
+    //          place those small data into lastUnfilledNormalBlock and save it. // (do not change the pos of the old data in lastUnfilledNormalBlock)
+    //          notify the index of old data in lastUnfilledNormalBlock changed
+    //      end
+    //      if there is small data in cachedkeyvalues still
+    //          clean lastUnfilledNormalBlock
+    //      end
+    //  end
+    //
+    //  saving all big data.
+    //  if there is small data in cachedkeyvalues still
+    //      saving all small data to the end.
+    //      set last unfilled normalblock with new situation.
+    //  end
+}
+
+void DataFile::SaveFilledBlock(void)
+{
+    //  if there are big data only
+    //      saving all big data.
+    //      return
+    //  end
+    //
+    //  // have small data
+    //  if there is lastUnfilledNormalBlock
+    //      old_lastUnfilledNormalBlock = lastUnfilledNormalBlock
+    //      data_PlaceIntoLastUnfilledNormalBlock = find(key that is not accur after lastUnfilledNormalBlock && the rest of block can pack it)
+    //      if data_PlaceIntoLastUnfilledNormalBlock is not empty
+    //          removing those small data from cachedkeyvalues
+    //          place those small data into lastUnfilledNormalBlock and save it. // (do not change the pos of the old data in lastUnfilledNormalBlock)
+    //          notify the index of old data in lastUnfilledNormalBlock changed
+    //      end
+    //      if there is small data in cachedkeyvalues still
+    //          clean lastUnfilledNormalBlock
+    //      end
+    //  end
+    //
+    //  saving all big data.
+    //  if there is small data in cachedkeyvalues still
+    //      saving filled block with small data && left the rest data in cachedkeyvalues
+    //  end
 }
 
 std::string DataFile::name_to_file_name(const std::string& name)

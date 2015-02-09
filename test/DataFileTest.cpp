@@ -26,7 +26,7 @@ void DataFileTest::tearDown()
 void DataFileTest::test_constructor()
 {
     {
-        DataFile f("./test_tmp/", "name1.data", 2);
+        DataFile f("./test_tmp/", "name1.data", 2, 4096);
         CPPUNIT_ASSERT_EQUAL(f.GetFullPathFileName(), std::string("./test_tmp/name1.data"));
     }
 }

@@ -4,28 +4,50 @@
 #include <string>
 #include "typedef.h"
 
-class DataBlock;
 
 namespace DuoDuo
 {
+    class DataBlock;
+
     class DataFile
     {
     protected:
-        class CachedBlock
+        class LastUnfilledNormalBlock
         {
         public:
-            CachedBlock(void) {}
+            LastUnfilledNormalBlock(size_t block_size);
+            ~LastUnfilledNormalBlock();
+
         private:
-            //DataBlock* m_pCachedBlock;
-            block_index_t m_BlockIndexOfCachedNormalBlock;
+            DataBlock* m_pNormalBlock;
+            block_index_t m_BlockIndex;
         };
 
     public:
         static DataFile* Create(const std::string& folder, const std::string& name);
 
-        DataFile(const std::string& folder, const std::string& filename, int fd);
+        DataFile(const std::string& folder, const std::string& filename, int fd, size_t block_size);
 
+        // AddData RemoveData will only add data to cache.i
+        // You should use Save or SaveFilledBlock to start storing data.
+        // And you can use Flush() to ensure the data saved to disk.
+        // example: saving all data && make sure data is stored to disk.
+        //   datafile.AddData  datafile.AddData  datafile.RemoveData  datafile.AddData  ...
+        //   datafile.Save
+        //   datafile.Flush
+        // or:  save all full block. and let os controll the io.
+        //   datafile.AddData  ...
+        //   datafile.SaveFilledBlock
         f_offset AddData(const std::string& key, const std::string& value);
+        void RemoveData(const std::string& key);
+
+        // Save() will saving all unsaved data to file. and return the index information.
+        void Save(void);
+
+        // SaveFilledBlock() will save datas that can fill up the block. This means some data will left in m_CachedKeyValues (that can not fill up the block).
+        void SaveFilledBlock(void);
+
+        //void Flush(void);
 
         std::string GetFullPathFileName(void) const;
 
@@ -36,7 +58,8 @@ namespace DuoDuo
         std::string m_Folder;
         std::string m_Filename;
         int m_Fd;
-        CachedBlock m_CachedBlock;
+        LastUnfilledNormalBlock m_LastUnfilledNormalBlock;
+        key_value_map_t m_CachedKeyValues;
     };
 }
 

@@ -130,9 +130,11 @@ BEGIN_ES_NAMESPACE
             }
             else
             {
-                char* buf = new char(sizeToUnpack + 1);
+                char* buf = new char[sizeToUnpack + 1];
                 Unpack(buf, sizeToUnpack, sizeToUnpack);
-                return ::std::string(buf);
+                ::std::string ret(buf);
+                delete [] buf;
+                return ret;
             }
         }
 

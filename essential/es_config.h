@@ -1,6 +1,6 @@
 #pragma once
 
-#define  ES_PUBLISH_VERSION  1.0	// µ±Ç°°æ±¾ºÅ
+#define  ES_PUBLISH_VERSION  1.0
 
 #ifdef    ES_EXTERN_INCLUDE
 #include  ES_EXTERN_INCLUDE
@@ -17,11 +17,4 @@
 #define  BEGIN_ES_DETAIL_NAMESPACE  namespace  Es_Implement_Detail {
 #define  END_ES_DETAIL_NAMESPACE    }
 
-#ifndef WINVER
-#define WINVER 0x0501
-#endif 
-
-#ifndef _BOT_NAME_
-#define _BOT_NAME_	"SROKing"
-#endif
 

@@ -18,3 +18,8 @@ DataBlock* BlockCreater::CreateEmptyNormalBlock(const size_t block_size)
 {
     return NULL;
 }
+
+DataBlock* BlockCreater::CreateEmptyDataOnlyBlock(const size_t block_size)
+{
+    return NULL;
+}

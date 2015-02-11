@@ -7,7 +7,7 @@
 #include <Util.h>
 #include <Config.h>
 #include <check_function.h>
-
+#include <def.h>
 #include "test_def.h"
 #define private public
 #define protected public

@@ -15,6 +15,7 @@ namespace DuoDuo
         virtual ~BlockCreater(void) {}
 
         static DataBlock* CreateEmptyNormalBlock(const size_t block_size);
+        static DataBlock* CreateEmptyDataOnlyBlock(const size_t block_size);
 
     protected:
 

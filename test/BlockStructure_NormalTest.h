@@ -1,6 +1,6 @@
 // DataFileTest.h
-#ifndef _BLOCK_STRUCTURE_TEST_H_
-#define _BLOCK_STRUCTURE_TEST_H_
+#ifndef _BLOCK_STRUCTURE_NORMAL_TEST_H_
+#define _BLOCK_STRUCTURE_NORMAL_TEST_H_
 
 #include <cppunit/extensions/HelperMacros.h>
 

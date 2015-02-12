@@ -2,5 +2,13 @@
 -done 1. ddlib, essential编译开关: 加上dbg用调试信息
 2. 将test的makefile移到test中.
 -done 3. 将allmake.sh等中路径相关部分去掉.
-4. assert显示调用栈
-5. istream ostream库中的0d0a处理.
+4. assert显示调用栈 backtrace
+-done 5. istream ostream库中的0d0a处理.
+6. 将cppunit的安装包放到git中.
+7. def.h更名为dd_def.h
+8. 将StructCalc改为非成员变量.
+9. 将StructCalc改为公共可访问.
+
+
+主要:
+1. 添加删除某个key/value的操作.

@@ -9,6 +9,7 @@ class BlockStructure_DataOnlyTest : public CPPUNIT_NS::TestFixture
   CPPUNIT_TEST_SUITE( BlockStructure_DataOnlyTest );
   CPPUNIT_TEST( test_constructor );
   CPPUNIT_TEST( test_BlockNeedCount );
+  CPPUNIT_TEST( test_SaveAndLoad );
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -17,6 +18,7 @@ public:
 
   void test_constructor();
   void test_BlockNeedCount();
+  void test_SaveAndLoad();
 };
 
 #endif  // _BLOCK_STRUCTURE_DATA_ONLY_TEST_H_

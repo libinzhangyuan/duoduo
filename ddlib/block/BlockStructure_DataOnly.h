@@ -20,10 +20,11 @@ namespace DuoDuo
         virtual bool IsEnoughForData(const std::string& key, const std::string& value) const;
 
         virtual void AddData(const std::string& key, const std::string& value);
-        //virtual void PackBlock(void);
+        virtual void PackBlock(void);
 
 
     public:
+        const std::string& GetValueStoredInBlock(void) const {return m_ValueStoredInBlock;}
 
 
     public:

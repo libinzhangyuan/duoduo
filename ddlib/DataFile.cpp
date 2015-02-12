@@ -10,8 +10,39 @@
 #include "DataFile.h"
 #include "Util.h"
 #include "block/DataBlock.h"
+#include "block/BlockStructure_Normal.h"
 
 using namespace DuoDuo;
+
+
+namespace DuoDuo
+{
+    bool DataFile::CachedKeyValueContainer::HasSmallData(void) const
+    {
+        BlockStructure_Normal::StructCalc normalCalc(m_BlockSize);
+        for (key_value_map_t::const_iterator iter = m_CachedKeyValues.begin(); iter != m_CachedKeyValues.end(); ++iter)
+        {
+            const std::string& key = iter->first;
+            const std::string& value = iter->second;
+            if (normalCalc.IsNormalData(key, value) == true)
+                return true;
+        }
+        return false;
+    }
+
+    bool DataFile::CachedKeyValueContainer::HasBigData(void) const
+    {
+        BlockStructure_Normal::StructCalc normalCalc(m_BlockSize);
+        for (key_value_map_t::const_iterator iter = m_CachedKeyValues.begin(); iter != m_CachedKeyValues.end(); ++iter)
+        {
+            const std::string& key = iter->first;
+            const std::string& value = iter->second;
+            if (normalCalc.IsNormalData(key, value) == false)
+                return true;
+        }
+        return false;
+    }
+}
 
 namespace DuoDuo
 {
@@ -79,13 +110,14 @@ DataFile::DataFile(const std::string& folder, const std::string& filename, int f
     , m_Fd(fd)
     , m_BlockSize(block_size)
     , m_LastUnfilledNormalBlock(block_size)
+    , m_CachedKeyValues(block_size)
 {
     printf("\ncreate DataFile: %s %s\n", m_Folder.c_str(), m_Filename.c_str());
 }
 
-f_offset DataFile::AddData(const std::string& key, const std::string& value)
+void DataFile::AddData(const std::string& key, const std::string& value)
 {
-    return 0;
+    m_CachedKeyValues.AddData(key, value);
 }
 
 // Save() will saving all unsaved data to file.
@@ -101,7 +133,7 @@ void DataFile::Save(void)
     //  // have small data
     //  if there is lastUnfilledNormalBlock
     //      old_lastUnfilledNormalBlock = lastUnfilledNormalBlock
-    //      data_PlaceIntoLastUnfilledNormalBlock = find(key that is not accur after lastUnfilledNormalBlock && the rest of block can pack it && the same key in lastUnfilledNormalBlock if prefer)
+    //      data_PlaceIntoLastUnfilledNormalBlock = find(key that is not accur after lastUnfilledNormalBlock && the rest of block can pack it && the same key in lastUnfilledNormalBlock is prefer)
     //      if data_PlaceIntoLastUnfilledNormalBlock is not empty
     //          removing those small data from cachedkeyvalues
     //          place those small data into lastUnfilledNormalBlock and save it. // (do not change the pos of the old data in lastUnfilledNormalBlock)

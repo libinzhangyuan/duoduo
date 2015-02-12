@@ -2,10 +2,18 @@
 #include <cstdlib>
 
 #include <cppunit/config/SourcePrefix.h>
-#include <DataFile.h>
 #include "DataFileTest.h"
 
 #include "test_def.h"
+
+#define private public
+#define protected public
+#include <DataFile.h>
+#include <block/BlockStructure.h>
+#include <block/BlockStructure_Normal.h>
+#undef private
+#undef protected
+
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( DataFileTest );
@@ -86,38 +94,69 @@ void DataFileTest::test_create()
     }
 }
 
-void DataFileTest::test_add_data(void)
+void DataFileTest::test_AddData(void)
 {
-    return;
-
     // normal
     {
-        system("rm ./test_tmp/add_data.data");
-        DataFile* file = DataFile::Create("./test_tmp/", "add_data", 64);
+        system("rm ./test_tmp/AddData.data");
+        DataFile* file = DataFile::Create("./test_tmp/", "AddData", 64);
         CPPUNIT_ASSERT(file != NULL);
-/*        CPPUNIT_ASSERT(file->add_data(std::string("123456")) == 0);
-        CPPUNIT_ASSERT(file->add_data(std::string("7890")) == 6);
-        CPPUNIT_ASSERT(file->get_data(0, 6) == std::string("123456"));
-        CPPUNIT_ASSERT(file->get_data(6, 4) == std::string("7890"));
-*/
+        file->AddData("123456", "dw");
+        file->AddData("7890", "2323");
+        file->AddData("123456", "new");
+
+        CPPUNIT_ASSERT(file->m_CachedKeyValues.m_CachedKeyValues["123456"] == std::string("new"));
+        CPPUNIT_ASSERT(file->m_CachedKeyValues.m_CachedKeyValues["7890"] == std::string("2323"));
     }
 }
 
-void DataFileTest::test_get_data(void)
+void DataFileTest::test_HasSmallData()
 {
-    return;
+    // key too large for a empty normalBlock
+    {
+        DuoDuo::DataFile::CachedKeyValueContainer container(128);
+        CPPUNIT_ASSERT(container.HasSmallData() == false);
+        container.AddData("a23456789012345678", "gdf");
+        container.AddData("b23456789012345678", "gdf");
+        CPPUNIT_ASSERT(container.HasSmallData() == false);
+        container.AddData("12345678901234567", "gasdf");
+        CPPUNIT_ASSERT(container.HasSmallData() == true);
+    }
 
-    // normal
-/*    {
-        system("rm ./test_tmp/add_data.data");
-        DataFile* file = DataFile::Create("./test_tmp/", "add_data");
-        CPPUNIT_ASSERT(file != NULL);
+    // value too large for a empty normalBlock
+    {
+        DuoDuo::DataFile::CachedKeyValueContainer container(80); // data section: 53 = (80 * 11 / 16) - 2
+        container.AddData("2", "2v3456789012345678901234567890""123456789012345678901");
+        container.AddData("53", "2v3456789012345678901234567890""123456789012345678901");
+        CPPUNIT_ASSERT(container.HasSmallData() == false);
+        container.AddData("3", "2v3456789012345678901234567890""12345678901234567890");
+        CPPUNIT_ASSERT(container.HasSmallData() == true);
+    }
 
-        CPPUNIT_ASSERT(file->add_data(std::string("123456")) == 0);
-        CPPUNIT_ASSERT(file->get_data(0, 6) == std::string("123456"));
+}
 
-        CPPUNIT_ASSERT(file->add_data(std::string("7890")) == 6);
-        CPPUNIT_ASSERT(file->get_data(0, 6) == std::string("123456"));
-        CPPUNIT_ASSERT(file->get_data(6, 4) == std::string("7890"));
-    } */
+void DataFileTest::test_HasBigData()
+{
+    // key too large for a empty normalBlock
+    {
+        DuoDuo::DataFile::CachedKeyValueContainer container(128);
+        CPPUNIT_ASSERT(container.HasBigData() == false);
+        container.AddData("a2345678901234567", "gdf");
+        container.AddData("b2345678901234567", "gdf");
+        CPPUNIT_ASSERT(container.HasBigData() == false);
+        container.AddData("123456789012345678", "gasdf");
+        CPPUNIT_ASSERT(container.HasBigData() == true);
+    }
+
+    // value too large for a empty normalBlock
+    {
+        DuoDuo::DataFile::CachedKeyValueContainer container(80); // data section: 53 = (80 * 11 / 16) - 2
+        container.AddData("2", "2v3456789012345678901234567890""12345678901234567890");
+        container.AddData("53", "2v3456789012345678901234567890""1234567890123456789");
+        CPPUNIT_ASSERT(container.HasBigData() == false);
+        container.AddData("3", "2v3456789012345678901234567890""123456789012345678901");
+        CPPUNIT_ASSERT(container.HasBigData() == true);
+    }
+
+
 }

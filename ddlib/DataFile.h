@@ -23,6 +23,22 @@ namespace DuoDuo
             block_index_t m_BlockIndex;
         };
 
+        class CachedKeyValueContainer
+        {
+        public:
+            CachedKeyValueContainer(size_t block_size) : m_BlockSize(block_size) {}
+            ~CachedKeyValueContainer() {}
+            void AddData(const std::string& key, const std::string& value) {m_CachedKeyValues[key] = value;}
+
+            bool HasSmallData(void) const;
+            bool HasBigData(void) const;
+
+
+        private:
+            size_t m_BlockSize;
+            key_value_map_t m_CachedKeyValues;
+        };
+
     public:
         static DataFile* Create(const std::string& folder, const std::string& name, size_t block_size);
 
@@ -38,7 +54,7 @@ namespace DuoDuo
         // or:  save all full block. and let os controll the io.
         //   datafile.AddData  ...
         //   datafile.SaveFilledBlock
-        f_offset AddData(const std::string& key, const std::string& value);
+        void AddData(const std::string& key, const std::string& value);
         void RemoveData(const std::string& key);
 
         // Save() will saving all unsaved data to file. and return the index information.
@@ -60,7 +76,7 @@ namespace DuoDuo
         int m_Fd;
         size_t m_BlockSize;
         LastUnfilledNormalBlock m_LastUnfilledNormalBlock;
-        key_value_map_t m_CachedKeyValues;
+        CachedKeyValueContainer m_CachedKeyValues;
     };
 }
 

@@ -52,8 +52,6 @@ namespace DuoDuo
         };
         KeyDataBodyResult MakeKeySectionBodyAndDataSectionBody(const key_value_map_t& key_values) const;
 
-        static size_t GetKeyNeedLen(const std::string& key);
-        static size_t GetValueNeedLen(const std::string& value);
 
         static Essential::_binary_buf MakeKeyBuffer(const std::string& key, const data_pos_t& data_pos);
         static Essential::_binary_buf MakeDeletedKeyBuffer(const std::string& key);
@@ -63,7 +61,7 @@ namespace DuoDuo
         static std::string GetValue(Essential::_binary_istream<Essential::_binary_buf>& data_section_stream);
         std::string GetValue(const data_pos_t& data_pos) const;
 
-    private:
+    public:
         class StructCalc
         {
             public:
@@ -77,6 +75,13 @@ namespace DuoDuo
                 size_t DataSectionHeadSize(void) const;
                 size_t DataSection_BodySize(void) const;
                 pos_in_block_t DataSection_BodyStartPos(void) const;
+
+                size_t GetKeyNeedLen(const std::string& key) const;
+                size_t GetValueNeedLen(const std::string& value) const;
+
+                bool IsNormalData(const std::string& key, const std::string& value) const;
+                bool IsEnoughForKeySection(const std::string& key) const;
+                bool IsEnoughForDataSection(const std::string& key, const std::string& value) const;
 
             private:
                 size_t m_BlockSize;

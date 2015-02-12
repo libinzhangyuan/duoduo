@@ -82,16 +82,16 @@ void BlockStructure_NormalTest::test_DataSection_BodySize()
 
 void BlockStructure_NormalTest::test_GetKeyNeedLen()
 {
-    CPPUNIT_ASSERT(BlockStructure_Normal::GetKeyNeedLen(std::string("1234567890")) == 15);
-    CPPUNIT_ASSERT(BlockStructure_Normal::GetKeyNeedLen(std::string("1")) == 6);
-    CPPUNIT_ASSERT_CHECKING_THROW(BlockStructure_Normal::GetKeyNeedLen(std::string("")));
+    CPPUNIT_ASSERT(BlockStructure_Normal::StructCalc(64).GetKeyNeedLen(std::string("1234567890")) == 15);
+    CPPUNIT_ASSERT(BlockStructure_Normal::StructCalc(64).GetKeyNeedLen(std::string("1")) == 6);
+    CPPUNIT_ASSERT_CHECKING_THROW(BlockStructure_Normal::StructCalc(64).GetKeyNeedLen(std::string("")));
 }
 
 void BlockStructure_NormalTest::test_GetValueNeedLen()
 {
-    CPPUNIT_ASSERT(BlockStructure_Normal::GetValueNeedLen(std::string("1234567890")) == 13);
-    CPPUNIT_ASSERT(BlockStructure_Normal::GetValueNeedLen(std::string("1")) == 4);
-    CPPUNIT_ASSERT(BlockStructure_Normal::GetValueNeedLen(std::string("")) == 3);
+    CPPUNIT_ASSERT(BlockStructure_Normal::StructCalc(64).GetValueNeedLen(std::string("1234567890")) == 13);
+    CPPUNIT_ASSERT(BlockStructure_Normal::StructCalc(64).GetValueNeedLen(std::string("1")) == 4);
+    CPPUNIT_ASSERT(BlockStructure_Normal::StructCalc(64).GetValueNeedLen(std::string("")) == 3);
 }
 
 void BlockStructure_NormalTest::test_MakeKeyBuffer()
@@ -152,9 +152,9 @@ void BlockStructure_NormalTest::test_IsEnoughForData()
             CPPUNIT_ASSERT(normal_calc.DataSection_BodySize() == 86); // (128 * 11 / 16) - 2
             std::string key1 = "1k3";
             std::string value1 = "1v34567890";
-            size_t key1_needLen = BlockStructure_Normal::GetKeyNeedLen(key1);
+            size_t key1_needLen = BlockStructure_Normal::StructCalc(64).GetKeyNeedLen(key1);
             CPPUNIT_ASSERT(key1_needLen == 8);
-            size_t value1_needLen = BlockStructure_Normal::GetValueNeedLen(value1);
+            size_t value1_needLen = BlockStructure_Normal::StructCalc(64).GetValueNeedLen(value1);
             CPPUNIT_ASSERT(value1_needLen = 13);
 
             CPPUNIT_ASSERT(normal.IsEnoughForData(key1, value1) == true);
@@ -163,7 +163,7 @@ void BlockStructure_NormalTest::test_IsEnoughForData()
             // in boundary
             {
                 std::string key3 = "3k3456789";
-                size_t key3_needLen = BlockStructure_Normal::GetKeyNeedLen(key3);
+                size_t key3_needLen = BlockStructure_Normal::StructCalc(64).GetKeyNeedLen(key3);
                 CPPUNIT_ASSERT(key3_needLen == 14);
                 std::string value3 = "2v34567890";
                 CPPUNIT_ASSERT(normal.IsEnoughForData(key3, value3) == true);
@@ -172,7 +172,7 @@ void BlockStructure_NormalTest::test_IsEnoughForData()
             // out boundary
             {
                 std::string key4 = "3k34567890";
-                size_t key4_needLen = BlockStructure_Normal::GetKeyNeedLen(key4);
+                size_t key4_needLen = BlockStructure_Normal::StructCalc(64).GetKeyNeedLen(key4);
                 CPPUNIT_ASSERT(key4_needLen == 15);
                 std::string value4 = "2v34567890";
                 CPPUNIT_ASSERT(normal.IsEnoughForData(key4, value4) == false);
@@ -201,7 +201,7 @@ void BlockStructure_NormalTest::test_IsEnoughForData()
             BlockStructure_Normal normal(block);
 
             std::string key3 = "3k";
-            size_t key3_needLen = BlockStructure_Normal::GetKeyNeedLen(key3);
+            size_t key3_needLen = BlockStructure_Normal::StructCalc(64).GetKeyNeedLen(key3);
             CPPUNIT_ASSERT(key3_needLen == 7);
             CPPUNIT_ASSERT(normal.IsEnoughForData(key3, "") == true);
         }
@@ -234,9 +234,9 @@ void BlockStructure_NormalTest::test_IsEnoughForData()
 
             std::string key1 = "1";
             std::string value1 = "1v34567890";
-            size_t key1_needLen = BlockStructure_Normal::GetKeyNeedLen(key1);
+            size_t key1_needLen = BlockStructure_Normal::StructCalc(64).GetKeyNeedLen(key1);
             CPPUNIT_ASSERT(key1_needLen == 6);
-            size_t value1_needLen = BlockStructure_Normal::GetValueNeedLen(value1);
+            size_t value1_needLen = BlockStructure_Normal::StructCalc(64).GetValueNeedLen(value1);
             CPPUNIT_ASSERT(value1_needLen = 13);
 
             CPPUNIT_ASSERT(normal.IsEnoughForData(key1, value1) == true);

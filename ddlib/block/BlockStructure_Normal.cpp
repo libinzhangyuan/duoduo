@@ -64,6 +64,33 @@ namespace DuoDuo // StructCalc
     {
         return sizeof(NormalBlock::data_body_section_used_count_t);
     }
+
+    size_t BlockStructure_Normal::StructCalc::GetKeyNeedLen(const std::string& key) const
+    {
+        assert_check(key.size() > 0, "BlockStructure_Normal::StructCalc::GetKeyNeedLen");
+        return sizeof(NormalBlock::key_len_t) + sizeof(data_pos_t) + sizeof(NormalBlock::KEY_CHECK_NUM) + key.size();
+    }
+
+    size_t BlockStructure_Normal::StructCalc::GetValueNeedLen(const std::string& value) const
+    {
+        return sizeof(NormalBlock::data_len_t) + sizeof(NormalBlock::DATA_CHECK_NUM) + value.size();
+    }
+
+    bool BlockStructure_Normal::StructCalc::IsNormalData(const std::string& key, const std::string& value) const
+    {
+        return IsEnoughForKeySection(key) && IsEnoughForDataSection(key, value);
+    }
+
+    bool BlockStructure_Normal::StructCalc::IsEnoughForKeySection(const std::string& key) const
+    {
+        return GetKeyNeedLen(key) <= KeySection_BodySize();
+    }
+
+    bool BlockStructure_Normal::StructCalc::IsEnoughForDataSection(const std::string& key, const std::string& value) const
+    {
+        return GetValueNeedLen(value) <= DataSection_BodySize();
+    }
+
 }
 
 
@@ -88,7 +115,7 @@ bool BlockStructure_Normal::IsEnoughForKeySection(const std::string& key) const
     size_t sum = KeySection_BodyUsedCount_Except(key);
 
     //  count bytes need of new key.
-    sum += GetKeyNeedLen(key);
+    sum += StructCalc(BlockSize()).GetKeyNeedLen(key);
     //  check
     return sum <= StructCalc(BlockSize()).KeySection_BodySize();
 }
@@ -98,7 +125,7 @@ bool BlockStructure_Normal::IsEnoughForDataSection(const std::string& key, const
     // calc dataSection body used count except input key
     size_t sum = DataSection_BodyUsedCount_Except(key);
     // count bytes need of new value.
-    sum += GetValueNeedLen(value);
+    sum += StructCalc(BlockSize()).GetValueNeedLen(value);
     // check
     return sum <= StructCalc(BlockSize()).DataSection_BodySize();
 }
@@ -115,7 +142,7 @@ size_t BlockStructure_Normal::KeySection_BodyUsedCount_Except(const std::string&
         const std::string& tmpkey = iter->first;
         if (key == tmpkey)
             continue;
-        sum += GetKeyNeedLen(tmpkey);
+        sum += StructCalc(BlockSize()).GetKeyNeedLen(tmpkey);
     }
     return sum;
 }
@@ -213,7 +240,7 @@ size_t BlockStructure_Normal::DataSection_BodyUsedCount_Except(const std::string
         const std::string& tmpvalue = iter->second;
         if (key == tmpkey)
             continue;
-        sum += GetValueNeedLen(tmpvalue);
+        sum += StructCalc(BlockSize()).GetValueNeedLen(tmpvalue);
     }
     return sum;
 }
@@ -299,17 +326,6 @@ BlockStructure_Normal::KeyDataBodyResult BlockStructure_Normal::MakeKeySectionBo
         data_body_stream.Pack(valueBuff.c_str(), valueBuff.size());
     }
     return result;
-}
-
-size_t BlockStructure_Normal::GetKeyNeedLen(const std::string& key)
-{
-    assert_check(key.size() > 0, "BlockStructure_Normal::GetKeyNeedLen");
-    return sizeof(NormalBlock::key_len_t) + sizeof(data_pos_t) + sizeof(NormalBlock::KEY_CHECK_NUM) + key.size();
-}
-
-size_t BlockStructure_Normal::GetValueNeedLen(const std::string& value)
-{
-    return sizeof(NormalBlock::data_len_t) + sizeof(NormalBlock::DATA_CHECK_NUM) + value.size();
 }
 
 Essential::_binary_buf BlockStructure_Normal::MakeKeyBuffer(const std::string& key, const data_pos_t& data_pos)

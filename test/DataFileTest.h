@@ -9,8 +9,9 @@ class DataFileTest : public CPPUNIT_NS::TestFixture
   CPPUNIT_TEST_SUITE( DataFileTest );
   CPPUNIT_TEST( test_constructor );
   CPPUNIT_TEST( test_create );
-  CPPUNIT_TEST( test_add_data );
-  CPPUNIT_TEST( test_get_data );
+  CPPUNIT_TEST( test_AddData );
+  CPPUNIT_TEST( test_HasSmallData );
+  CPPUNIT_TEST( test_HasBigData );
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -19,8 +20,9 @@ public:
 
   void test_constructor();
   void test_create();
-  void test_add_data();
-  void test_get_data();
+  void test_AddData();
+  void test_HasSmallData();
+  void test_HasBigData();
 };
 
 #endif  // DATAFILETEST_H

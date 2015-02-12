@@ -37,7 +37,7 @@ void DataFileTest::test_create()
     {
         {
             system("rm ./test_tmp/name1.data");
-            DataFile* file = DataFile::Create("./test_tmp/", "name1");
+            DataFile* file = DataFile::Create("./test_tmp/", "name1", 64);
             CPPUNIT_ASSERT(file != NULL);
             CPPUNIT_ASSERT_EQUAL(file->GetFullPathFileName(), std::string("./test_tmp/name1.data"));
         }
@@ -46,7 +46,7 @@ void DataFileTest::test_create()
         {
             system("rm ./test_tmp/duoduo_test_foler_not_exist/*");
             system("rmdir ./test_tmp/duoduo_test_foler_not_exist");
-            DataFile* file = DataFile::Create("./test_tmp/duoduo_test_foler_not_exist/", "name1");
+            DataFile* file = DataFile::Create("./test_tmp/duoduo_test_foler_not_exist/", "name1", 64);
             CPPUNIT_ASSERT(file != NULL);
             CPPUNIT_ASSERT_EQUAL(file->GetFullPathFileName(), std::string("./test_tmp/duoduo_test_foler_not_exist/name1.data"));
         }
@@ -54,27 +54,34 @@ void DataFileTest::test_create()
         // file exist
         {
             system("echo '12345' >> ./test_tmp/name1.data");
-            DataFile* file = DataFile::Create("./test_tmp/", "name1");
+            DataFile* file = DataFile::Create("./test_tmp/", "name1", 64);
             CPPUNIT_ASSERT(file != NULL);
             CPPUNIT_ASSERT_EQUAL(file->GetFullPathFileName(), std::string("./test_tmp/name1.data"));
         }
     }
 
+    // block_size must be multiply of 16
+    {
+        system("rm ./test_tmp/name1.data");
+        CPPUNIT_ASSERT_THROW(DataFile::Create("./test_tmp/", "name1", 63), Essential::AssertException);
+        CPPUNIT_ASSERT_THROW(DataFile::Create("./test_tmp/", "name1", 0), Essential::AssertException);
+    }
+
     // folder permission not allowed
     {
         {
-            DataFile* file = DataFile::Create("/etc/", "name1");
+            DataFile* file = DataFile::Create("/etc/", "name1", 64);
             CPPUNIT_ASSERT(file == NULL);
         }
         {
-            DataFile* file = DataFile::Create("/etc/haha/", "name1");
+            DataFile* file = DataFile::Create("/etc/haha/", "name1", 64);
             CPPUNIT_ASSERT(file == NULL);
         }
     }
 
     // file permission not allowed
     {
-        DataFile* file = DataFile::Create("/etc/", "hosts");
+        DataFile* file = DataFile::Create("/etc/", "hosts", 64);
         CPPUNIT_ASSERT(file == NULL);
     }
 }
@@ -86,7 +93,7 @@ void DataFileTest::test_add_data(void)
     // normal
     {
         system("rm ./test_tmp/add_data.data");
-        DataFile* file = DataFile::Create("./test_tmp/", "add_data");
+        DataFile* file = DataFile::Create("./test_tmp/", "add_data", 64);
         CPPUNIT_ASSERT(file != NULL);
 /*        CPPUNIT_ASSERT(file->add_data(std::string("123456")) == 0);
         CPPUNIT_ASSERT(file->add_data(std::string("7890")) == 6);

@@ -24,7 +24,7 @@ namespace DuoDuo
         };
 
     public:
-        static DataFile* Create(const std::string& folder, const std::string& name);
+        static DataFile* Create(const std::string& folder, const std::string& name, size_t block_size);
 
         DataFile(const std::string& folder, const std::string& filename, int fd, size_t block_size);
 
@@ -58,6 +58,7 @@ namespace DuoDuo
         std::string m_Folder;
         std::string m_Filename;
         int m_Fd;
+        size_t m_BlockSize;
         LastUnfilledNormalBlock m_LastUnfilledNormalBlock;
         key_value_map_t m_CachedKeyValues;
     };

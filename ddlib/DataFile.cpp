@@ -9,7 +9,6 @@
 #include <check_function.h>
 #include "DataFile.h"
 #include "Util.h"
-#include "Config.h"
 #include "block/DataBlock.h"
 
 using namespace DuoDuo;
@@ -33,11 +32,13 @@ namespace DuoDuo
 
 }
 
-DataFile* DataFile::Create(const std::string& folder, const std::string& name)
+DataFile* DataFile::Create(const std::string& folder, const std::string& name, size_t block_size)
 {
     assert_check(folder.size() > 0, "DataFile::create");
     assert_check(folder[folder.size() - 1] == '/', "DataFile::create");
     assert_check(name.size() > 0, "DataFile::create");
+    assert_check(block_size > 0, "DataFile::create");
+    assert_check( ((block_size >> 4) << 4) == block_size, "DataFile::create" );
 
     // check the exist of folder. and trying to create folder
     {
@@ -69,7 +70,6 @@ DataFile* DataFile::Create(const std::string& folder, const std::string& name)
         return NULL;
     }
 
-    size_t block_size = Config::Ins().ssd_block_size();
     return new DuoDuo::DataFile(folder, name_to_file_name(name), fd, block_size);
 }
 
@@ -77,6 +77,7 @@ DataFile::DataFile(const std::string& folder, const std::string& filename, int f
     : m_Folder(folder)
     , m_Filename(filename)
     , m_Fd(fd)
+    , m_BlockSize(block_size)
     , m_LastUnfilledNormalBlock(block_size)
 {
     printf("\ncreate DataFile: %s %s\n", m_Folder.c_str(), m_Filename.c_str());

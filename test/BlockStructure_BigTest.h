@@ -27,4 +27,4 @@ public:
   void test_LoadFromBlock();
 };
 
-#endif  // _BLOCK_STRUCTURE_TEST_H_
+#endif  // _BLOCK_STRUCTURE_BIG_TEST_H_

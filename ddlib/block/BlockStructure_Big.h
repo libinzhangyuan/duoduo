@@ -37,7 +37,7 @@ namespace DuoDuo
     public:
         size_t ValueSize_CanStoreToBlock(const size_t& key_len) const;
 
-    private:
+    public:
         class StructCalc
         {
             public:

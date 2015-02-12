@@ -11,14 +11,38 @@ namespace DuoDuo
     {
     public:
         BlockStructure_DataOnly(block_t& block) :
-            BlockStructure(block, BlockStructure::eBlockType_DataOnly) {}
+            BlockStructure(block, BlockStructure::eBlockType_DataOnly),
+            m_StructCalc(block.size()) {}
+
+        virtual void LoadFromBlock(void);
+        //virtual std::map<std::string /*key*/, pos_in_block_t> IndexFromBlock(void) const;
+
+        virtual bool IsEnoughForData(const std::string& key, const std::string& value) const;
+
+        virtual void AddData(const std::string& key, const std::string& value);
+        //virtual void PackBlock(void);
+
 
     public:
-        size_t ValueSize_CanStoreToBlock(const size_t& key_len) const;
 
 
     public:
-        static size_t ValueSize_CanStoreToBlock(const size_t& key_len, const size_t& block_size);
+        class StructCalc
+        {
+            public:
+                StructCalc(size_t block_size) : m_BlockSize(block_size) {}
+
+                size_t HeadSize(void) const;
+                size_t MaxValueLen(void) const;
+                size_t BlockNeedCount(const size_t data_size_need_store_in_dataonly) const;
+
+            private:
+                size_t m_BlockSize;
+        };
+
+    private:
+        StructCalc m_StructCalc;
+        std::string m_ValueStoredInBlock;
     };
 }
 

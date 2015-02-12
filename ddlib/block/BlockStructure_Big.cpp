@@ -91,7 +91,7 @@ void BlockStructure_Big::PackBlock(void)
 
     // extra block count
     const size_t left_value_size = m_ValueTotalLen - m_ValueStoredInBlock.size();
-    extra_block_count_t extraBlockCount = left_value_size / BlockStructure_DataOnly::ValueSize_CanStoreToBlock(m_Key.size(), m_Block.size());
+    extra_block_count_t extraBlockCount = BlockStructure_DataOnly::StructCalc(m_Block.size()).BlockNeedCount(left_value_size);
     bfstream.Pack<extra_block_count_t>(extraBlockCount);
 
     // data

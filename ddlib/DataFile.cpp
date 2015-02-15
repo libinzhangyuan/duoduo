@@ -42,23 +42,34 @@ namespace DuoDuo
         }
         return false;
     }
+
+    std::vector<DataBlock> DataFile::CachedKeyValueContainer::PopBigBlock(void)
+    {
+        BlockStructure_Normal::StructCalc normalCalc(m_BlockSize);
+        for (key_value_map_t::const_iterator iter = m_CachedKeyValues.begin(); iter != m_CachedKeyValues.end(); ++iter)
+        {
+            const std::string& key = iter->first;
+            const std::string& value = iter->second;
+            if (normalCalc.IsNormalData(key, value) == false)
+            {
+                m_CachedKeyValues.erase(iter);
+                return DataBlock::CreateBlockWithBigData(m_BlockSize, key, value);
+            }
+        }
+        return std::vector<DataBlock>();
+    }
 }
 
 namespace DuoDuo
 {
     DataFile::LastUnfilledNormalBlock::LastUnfilledNormalBlock(size_t block_size)
-        : m_pNormalBlock(NULL), m_BlockIndex(-1)
+        : m_BlockIndex(-1)
     {
-        m_pNormalBlock = DataBlock::CreateEmptyNormalBlock(block_size);
+        m_NormalBlock = DataBlock::EmptyNormalBlock(block_size);
     }
 
     DataFile::LastUnfilledNormalBlock::~LastUnfilledNormalBlock()
     {
-        if (m_pNormalBlock != NULL)
-        {
-            delete m_pNormalBlock;
-            m_pNormalBlock = NULL;
-        }
     }
 
 }
@@ -126,7 +137,7 @@ void DataFile::AddData(const std::string& key, const std::string& value)
 void DataFile::Save(void)
 {
     //  if there are big data only
-    //      saving all big data.
+    //      saving all big data && clean those data.
     //      return
     //  end
     //
@@ -144,9 +155,9 @@ void DataFile::Save(void)
     //      end
     //  end
     //
-    //  saving all big data.
+    //  saving all big data && clean those data.
     //  if there is small data in cachedkeyvalues still
-    //      saving all small data to the end.
+    //      saving all small data to the end && clean those data.
     //      set last unfilled normalblock with new situation.
     //  end
 }
@@ -154,7 +165,7 @@ void DataFile::Save(void)
 void DataFile::SaveFilledBlock(void)
 {
     //  if there are big data only
-    //      saving all big data.
+    //      saving all big data && clean those data.
     //      return
     //  end
     //
@@ -172,9 +183,9 @@ void DataFile::SaveFilledBlock(void)
     //      end
     //  end
     //
-    //  saving all big data.
+    //  saving all big data && clean those data.
     //  if there is small data in cachedkeyvalues still
-    //      saving filled block with small data && left the rest data in cachedkeyvalues
+    //      saving filled block with small data && clean those data && left the rest data in cachedkeyvalues
     //  end
 }
 

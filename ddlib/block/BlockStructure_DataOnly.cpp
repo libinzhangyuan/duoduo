@@ -44,6 +44,16 @@ namespace DuoDuo
     }
 }
 
+BlockStructure* BlockStructure_DataOnly::Clone(void)
+{
+    BlockStructure_DataOnly* pClone = new BlockStructure_DataOnly(m_Block);
+    pClone->m_BlockType = m_BlockType;
+    pClone->m_BlockSize = m_BlockSize;
+    pClone->m_StructCalc = m_StructCalc;
+    pClone->m_ValueStoredInBlock = m_ValueStoredInBlock;
+    return pClone;
+}
+
 bool BlockStructure_DataOnly::IsEnoughForData(const std::string& key, const std::string& value) const
 {
     assert_check(false, "BlockStructure_DataOnly::IsEnoughForData:  should not call this function!");
@@ -94,4 +104,10 @@ void BlockStructure_DataOnly::LoadFromBlock(void)
 
     // data
     m_ValueStoredInBlock = bstream.Unpack(data_len);
+}
+
+size_t BlockStructure_DataOnly::GetExtraBlockCount(void) const
+{
+    assert_check(false, "BlockStructure_DataOnly::GetExtraBlockCount should not call this function!");
+    return 0;
 }

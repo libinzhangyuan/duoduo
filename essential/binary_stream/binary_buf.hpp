@@ -30,7 +30,7 @@ BEGIN_ES_NAMESPACE
 		_binary_buf(const char *_Ptr, size_t _Count) : m_Str(_Ptr, _Count) {;}
 		_binary_buf(const _binary_buf& b) : m_Str(b.m_Str) {;}
 
-		inline _binary_buf& operator = (_binary_buf& b);
+		inline _binary_buf& operator = (const _binary_buf& b);
 		inline _binary_buf& operator+=(const _binary_buf& _Right); // append _Right
 		inline _binary_buf& operator+=(char _Ch); // append 1 * _Ch
 
@@ -150,7 +150,7 @@ BEGIN_ES_NAMESPACE
     }
 
 
-	inline _binary_buf& _binary_buf::operator = (_binary_buf& b) 
+	inline _binary_buf& _binary_buf::operator = (const _binary_buf& b) 
 	{
 		// m_Str进行了自拷贝检查了的
 		m_Str = b.m_Str; 

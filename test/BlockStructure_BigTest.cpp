@@ -40,7 +40,7 @@ void BlockStructure_BigTest::test_constructor()
 void BlockStructure_BigTest::test_IsEnoughForData()
 {
     block_t block;
-    block.resize(64); // 64 - 16 - 2 - 10 - 1 - 4 - 2 = 29
+    block.resize(64); // valueSize when keySize=10:  64 - 16 - 2 - 10 - 1 - 4 - 2 = 29
     BlockStructure_Big big(block);
     CPPUNIT_ASSERT(big.IsEnoughForData("1234567890", "12345678901234567890123456789") == true);
     CPPUNIT_ASSERT(big.IsEnoughForData("1234567890", "123456789012345678901234567890") == false);
@@ -54,7 +54,7 @@ void BlockStructure_BigTest::test_ValueSize_CanStoreToBlock()
         block.resize(4096);
         BlockStructure_Big big(block);
         //                                                                                 key      dataLen
-        CPPUNIT_ASSERT(big.ValueSize_CanStoreToBlock(10) == 4096 - DD_BLOCK_HEAD_SIZE - 2 - 10 - 1 -   4   -   2);
+        CPPUNIT_ASSERT(big.m_StructCalc.MaxValueLen(10) == 4096 - DD_BLOCK_HEAD_SIZE - 2 - 10 - 1 -   4   -   2);
         //                                                                head         keyLen   chenNum    extraBlockCount 
     }
 
@@ -63,7 +63,7 @@ void BlockStructure_BigTest::test_ValueSize_CanStoreToBlock()
         block.resize(64);
         BlockStructure_Big big(block);
         //                                                                                       key      dataLen
-        CPPUNIT_ASSERT(big.ValueSize_CanStoreToBlock(10) == 29); // 64 - DD_BLOCK_HEAD_SIZE - 2 - 10 - 1 -   4   -   2);
+        CPPUNIT_ASSERT(big.m_StructCalc.MaxValueLen(10) == 29); // 64 - DD_BLOCK_HEAD_SIZE - 2 - 10 - 1 -   4   -   2);
         //                                                                      head         keyLen   chenNum    extraBlockCount 
     }
 

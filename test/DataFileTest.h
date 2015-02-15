@@ -12,6 +12,7 @@ class DataFileTest : public CPPUNIT_NS::TestFixture
   CPPUNIT_TEST( test_AddData );
   CPPUNIT_TEST( test_HasSmallData );
   CPPUNIT_TEST( test_HasBigData );
+  //CPPUNIT_TEST( test_PopBigBlock );
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -23,6 +24,7 @@ public:
   void test_AddData();
   void test_HasSmallData();
   void test_HasBigData();
+  //void test_PopBigBlock();
 };
 
 #endif  // DATAFILETEST_H

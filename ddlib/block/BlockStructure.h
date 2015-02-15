@@ -23,6 +23,8 @@ namespace DuoDuo
             m_Block(block), m_BlockType(blockType), m_BlockSize(block.size()) {}
         virtual ~BlockStructure(void) {}
 
+        virtual BlockStructure* Clone(void) = 0;
+
         //static BlockStructure* SelectStructure(const std::string& key, const std::string& value);
         static BlockStructure* Create(block_t& block, BlockType blockType);
         //static BlockStructure* SelectStructure(const block_t& block); // block is truly data in a file block.
@@ -30,8 +32,16 @@ namespace DuoDuo
         BlockType Type(void) {return m_BlockType;}
 
         virtual void InitBlock(void) const;
-        //virtual bool IsEnoughForData(const std::string& key, const std::string& value) const = 0;
-        //virtual void AddData(const std::string& key, const std::string& value) = 0;
+        virtual bool IsEnoughForData(const std::string& key, const std::string& value) const = 0;
+        virtual void AddData(const std::string& key, const std::string& value) = 0;
+        virtual void PackBlock(void) = 0;
+        virtual void LoadFromBlock(void) = 0;
+        virtual size_t GetExtraBlockCount(void) const = 0;
+        //virtual std::map<std::string /*key*/, pos_in_block_t> IndexFromBlock(void) const = 0;
+
+        virtual const key_value_map_t& GetDatas(void) const;
+        virtual const std::string& GetKey(void) const;
+        virtual const std::string& GetValueStoredInBlock(void) const;
 
         //struct LoadDataRst
         //{
@@ -48,11 +58,10 @@ namespace DuoDuo
         const block_t& GetBlock(void) const {return m_Block;}
         const size_t BlockSize(void) const {return m_Block.size();}
         void InitHead(void) const;
+
+    protected:
         block_t& m_Block;
 
-    private:
-
-    private:
         BlockType m_BlockType;
         size_t m_BlockSize;
     };

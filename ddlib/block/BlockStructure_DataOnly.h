@@ -13,15 +13,14 @@ namespace DuoDuo
         BlockStructure_DataOnly(block_t& block) :
             BlockStructure(block, BlockStructure::eBlockType_DataOnly),
             m_StructCalc(block.size()) {}
-
-        virtual void LoadFromBlock(void);
-        //virtual std::map<std::string /*key*/, pos_in_block_t> IndexFromBlock(void) const;
+        virtual BlockStructure* Clone(void);
 
         virtual bool IsEnoughForData(const std::string& key, const std::string& value) const;
-
         virtual void AddData(const std::string& key, const std::string& value);
         virtual void PackBlock(void);
-
+        virtual void LoadFromBlock(void);
+        virtual size_t GetExtraBlockCount(void) const;
+        //virtual std::map<std::string /*key*/, pos_in_block_t> IndexFromBlock(void) const;
 
     public:
         const std::string& GetValueStoredInBlock(void) const {return m_ValueStoredInBlock;}
@@ -41,7 +40,7 @@ namespace DuoDuo
                 size_t m_BlockSize;
         };
 
-    private:
+    protected:
         StructCalc m_StructCalc;
         std::string m_ValueStoredInBlock;
     };

@@ -41,9 +41,16 @@ namespace DuoDuo
     }
 }
 
-size_t BlockStructure_Big::ValueSize_CanStoreToBlock(const size_t& key_len) const
+BlockStructure* BlockStructure_Big::Clone(void)
 {
-    return m_StructCalc.MaxValueLen(key_len);
+    BlockStructure_Big* pClone = new BlockStructure_Big(m_Block);
+    pClone->m_BlockType = m_BlockType;
+    pClone->m_BlockSize = m_BlockSize;
+    pClone->m_Key = m_Key;
+    pClone->m_ValueTotalLen = m_ValueTotalLen;
+    pClone->m_StructCalc = m_StructCalc;
+    pClone->m_ValueStoredInBlock = m_ValueStoredInBlock;
+    return pClone;
 }
 
 bool BlockStructure_Big::IsEnoughForData(const std::string& key, const std::string& value) const
@@ -57,11 +64,13 @@ void BlockStructure_Big::AddData(const std::string& key, const std::string& valu
 
     m_Key = key;
     m_ValueTotalLen = value.size();
-    const size_t max_value_size_in_block = ValueSize_CanStoreToBlock(key.size());
+    const size_t max_value_size_in_block = m_StructCalc.MaxValueLen(key.size());
     if (value.size() > max_value_size_in_block)
         m_ValueStoredInBlock = value.substr(0, max_value_size_in_block);
     else
         m_ValueStoredInBlock = value;
+
+    printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nmax_value:%d\nm_ValueStoredInBlock:%s\ncount:%d\n", m_ValueStoredInBlock.c_str(), m_ValueStoredInBlock.size());
 }
 
 void BlockStructure_Big::PackBlock(void)
@@ -90,12 +99,17 @@ void BlockStructure_Big::PackBlock(void)
     bfstream.Pack<BigBlock::data_len_t>(m_ValueTotalLen);
 
     // extra block count
-    const size_t left_value_size = m_ValueTotalLen - m_ValueStoredInBlock.size();
-    extra_block_count_t extraBlockCount = BlockStructure_DataOnly::StructCalc(m_Block.size()).BlockNeedCount(left_value_size);
+    extra_block_count_t extraBlockCount = CalcExtraBlockCount();
     bfstream.Pack<extra_block_count_t>(extraBlockCount);
 
     // data
     bfstream.Pack(m_ValueStoredInBlock.c_str(), m_ValueStoredInBlock.size());
+}
+
+BlockStructure_Big::extra_block_count_t BlockStructure_Big::CalcExtraBlockCount(void) const
+{
+    const size_t left_value_size = m_ValueTotalLen - m_ValueStoredInBlock.size();
+    return BlockStructure_DataOnly::StructCalc(m_Block.size()).BlockNeedCount(left_value_size);
 }
 
 void BlockStructure_Big::LoadFromBlock(void)
@@ -133,4 +147,9 @@ void BlockStructure_Big::LoadFromBlock(void)
     // value
     size_t value_size_in_this_block = (bstream.LeftBytes() < m_ValueTotalLen) ? bstream.LeftBytes() : m_ValueTotalLen;
     m_ValueStoredInBlock = bstream.Unpack(value_size_in_this_block);
+}
+
+size_t BlockStructure_Big::GetExtraBlockCount(void) const
+{
+    return CalcExtraBlockCount();
 }

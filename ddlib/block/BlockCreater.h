@@ -14,8 +14,11 @@ namespace DuoDuo
         BlockCreater(void) {}
         virtual ~BlockCreater(void) {}
 
-        static DataBlock* CreateEmptyNormalBlock(const size_t block_size);
-        static DataBlock* CreateEmptyDataOnlyBlock(const size_t block_size);
+        static DataBlock EmptyNormalBlock(const size_t block_size);
+        static DataBlock EmptyBigBlock(const size_t block_size);
+        static DataBlock EmptyDataOnlyBlock(const size_t block_size);
+
+        static std::vector<DataBlock> CreateBlockWithBigData(size_t blockSize, const std::string& key, const std::string& value);
 
     protected:
 

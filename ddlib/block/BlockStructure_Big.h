@@ -16,15 +16,13 @@ namespace DuoDuo
     public:
         BlockStructure_Big(block_t& block) : BlockStructure(block, BlockStructure::eBlockType_Big)
                                            , m_ValueTotalLen(-1), m_StructCalc(block.size()) {}
-
-        virtual void LoadFromBlock(void);
-        //virtual std::map<std::string /*key*/, pos_in_block_t> IndexFromBlock(void) const;
+        virtual BlockStructure* Clone(void);
 
         virtual bool IsEnoughForData(const std::string& key, const std::string& value) const;
 
-        /* usage
+        /* usage for big data
          * std::string key, value;
-         * store_len = big.ValueSize_CanStoreToBlock(key.size());
+         * store_len = bigStructure::StructCalc.MaxValueLen(key.size());
          * big.AddData(key, value);
          * big.PackBlock();
          * dataOnly.AddData(key, value[store_len .. store_len + dataOnlyMaxDataLen]);
@@ -32,10 +30,19 @@ namespace DuoDuo
          * ...
         */
         virtual void AddData(const std::string& key, const std::string& value);
+
         virtual void PackBlock(void);
 
+        virtual void LoadFromBlock(void);
+
+        virtual size_t GetExtraBlockCount(void) const;
+
+        //virtual std::map<std::string /*key*/, pos_in_block_t> IndexFromBlock(void) const;
+
     public:
-        size_t ValueSize_CanStoreToBlock(const size_t& key_len) const;
+        const std::string& GetKey(void) const {return m_Key;}
+        const std::string& GetValueStoredInBlock(void) const {return m_ValueStoredInBlock;}
+        size_t GetValueTotalLen(void) const {return m_ValueTotalLen;}
 
     public:
         class StructCalc
@@ -51,6 +58,8 @@ namespace DuoDuo
                 size_t m_BlockSize;
         };
 
+    private:
+        extra_block_count_t CalcExtraBlockCount(void) const;
 
     private:
         std::string m_Key;

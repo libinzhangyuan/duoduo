@@ -104,6 +104,16 @@ BlockStructure_Normal::BlockStructure_Normal(block_t& block)
 {
 }
 
+BlockStructure* BlockStructure_Normal::Clone(void)
+{
+    BlockStructure_Normal* pClone = new BlockStructure_Normal(m_Block);
+    pClone->m_BlockType = m_BlockType;
+    pClone->m_BlockSize = m_BlockSize;
+    pClone->m_KeyValues = m_KeyValues;
+    pClone->m_StructCalc = m_StructCalc;
+    return pClone;
+}
+
 bool BlockStructure_Normal::IsEnoughForData(const std::string& key, const std::string& value) const
 {
     return IsEnoughForKeySection(key) && IsEnoughForDataSection(key, value);
@@ -383,4 +393,14 @@ std::map<std::string /*key*/, pos_in_block_t> BlockStructure_Normal::IndexFromBl
         index[key] = data_pos;
     }
     return index;
+}
+
+size_t BlockStructure_Normal::GetExtraBlockCount(void) const
+{
+    return 0;
+}
+
+const key_value_map_t& BlockStructure_Normal::GetDatas(void) const
+{
+    return m_KeyValues;
 }

@@ -8,7 +8,8 @@
 7. def.h更名为dd_def.h
 8. 将StructCalc改为非成员变量.
 9. 将StructCalc改为公共可访问.
-
+10. 将BlockType移到DataBlockDef.h中.  删除DataBlock.h中的include  BlockStructure.h
 
 主要:
 1. 添加删除某个key/value的操作.
+2. 增加Data类，来表示 std::pair<key, value>

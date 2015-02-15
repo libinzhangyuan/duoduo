@@ -20,12 +20,18 @@ namespace DuoDuo
         BlockStructure_Normal(block_t& block);
         ~BlockStructure_Normal(void) {}
 
-        virtual void LoadFromBlock(void);
-        virtual std::map<std::string /*key*/, pos_in_block_t> IndexFromBlock(void) const;
+        virtual BlockStructure* Clone(void);
 
         virtual bool IsEnoughForData(const std::string& key, const std::string& value) const;
         virtual void AddData(const std::string& key, const std::string& value);
         virtual void PackBlock(void);
+        virtual void LoadFromBlock(void);
+        virtual size_t GetExtraBlockCount(void) const;
+        virtual std::map<std::string /*key*/, pos_in_block_t> IndexFromBlock(void) const;
+
+    public:
+        virtual const key_value_map_t& GetDatas(void) const;
+
 
     private:
         typedef pos_in_block_t data_pos_t;

@@ -3,6 +3,7 @@
 
 #include <string>
 #include "typedef.h"
+#include "block/DataBlock.h"
 
 
 namespace DuoDuo
@@ -19,7 +20,7 @@ namespace DuoDuo
             ~LastUnfilledNormalBlock();
 
         private:
-            DataBlock* m_pNormalBlock;
+            DataBlock m_NormalBlock;
             block_index_t m_BlockIndex;
         };
 
@@ -32,6 +33,22 @@ namespace DuoDuo
 
             bool HasSmallData(void) const;
             bool HasBigData(void) const;
+
+            // remove a BigData from cache and return it.
+            //std::pair<std::string /*key*/, std::string /*value*/> PopBigData(void);
+
+            // find a big data. pack it into bigBlock and dataOnlyBlock. remove those data from cache and return the blocks.
+            // return empty vector when there is no bigData.
+            std::vector<DataBlock> PopBigBlock(void);
+
+            // find some small data that can pack into one normalBlock. remove those data from cache and return the normalBlock.
+            DataBlock PopSmallBlock(void);
+
+            // find some small data that can pack into one normalBlock and fill up it.
+            ////DataBlock PopFilledSmallBlock(void);
+
+            ////void SaveAllBigData(void); //  saving && clean those data
+            ////lastnormalblock SaveAllSmallData(void);
 
 
         private:

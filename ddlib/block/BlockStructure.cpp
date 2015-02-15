@@ -85,3 +85,24 @@ void BlockStructure::CleanBody(void)
     m_Block.resize(HeadSize());
     m_Block.resize(oldSize);
 }
+
+const key_value_map_t& BlockStructure::GetDatas(void) const
+{
+    assert_check(false, "BlockStructure::GetDatas");
+    static key_value_map_t static_null_map;
+    return static_null_map;
+}
+
+const std::string& BlockStructure::GetKey(void) const
+{
+    assert_check(false, "BlockStructure::GetKey");
+    static std::string static_null_str;
+    return static_null_str;
+}
+
+const std::string& BlockStructure::GetValueStoredInBlock(void) const
+{
+    assert_check(false, "BlockStructure::GetValueStoredInBlock");
+    static std::string static_null_str;
+    return static_null_str;
+}

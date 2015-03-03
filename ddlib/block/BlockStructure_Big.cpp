@@ -69,8 +69,6 @@ void BlockStructure_Big::AddData(const std::string& key, const std::string& valu
         m_ValueStoredInBlock = value.substr(0, max_value_size_in_block);
     else
         m_ValueStoredInBlock = value;
-
-    printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nmax_value:%d\nm_ValueStoredInBlock:%s\ncount:%d\n", m_ValueStoredInBlock.c_str(), m_ValueStoredInBlock.size());
 }
 
 void BlockStructure_Big::PackBlock(void)

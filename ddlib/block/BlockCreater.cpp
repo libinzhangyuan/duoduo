@@ -52,7 +52,7 @@ std::vector<DataBlock> BlockCreater::CreateBlockWithBigData(size_t blockSize, co
         {
             DataBlock dataOnly(BlockStructure::eBlockType_DataOnly, blockSize);
             const size_t dataOnlyBlockMaxValueLen = BlockStructure_DataOnly::StructCalc(blockSize).MaxValueLen();
-            dataOnly.AddData(key, value);
+            dataOnly.AddData(key, leftValue);
             blocks.push_back(dataOnly);
 
             const size_t valueSizeInThisBlock = std::min(dataOnlyBlockMaxValueLen, leftValue.size());

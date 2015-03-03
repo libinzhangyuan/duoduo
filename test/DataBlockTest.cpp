@@ -66,15 +66,25 @@ void DataBlockTest::test_GetExtraBlockCount()
         {
             DataBlock big = BlockCreater::EmptyBigBlock(64);
             big.AddData("1234567890", "123456789012345678901234567890");
-            printf("\n2222222222222222222222222222222222222222222222\nextraBlockCount:%d\n", DataBlock::GetExtraBlockCount(big));
             CPPUNIT_ASSERT(DataBlock::GetExtraBlockCount(big) == 1);
         }
 
         // more more data
+            // maxValueLen of dataOnly(64) = 46; // 64 - 16 - 2;
         {
-            DataBlock big = BlockCreater::EmptyBigBlock(64);
-            big.AddData("1234567890", "12345678901234567890123456789""12345678901234567890123456789""1");
-            CPPUNIT_ASSERT(DataBlock::GetExtraBlockCount(big) == 2);
+            // in bound
+            {
+                DataBlock big = BlockCreater::EmptyBigBlock(64);
+                big.AddData("1234567890", "12345678901234567890123456789""1234567890123456789012345678901234567890123456");
+                CPPUNIT_ASSERT(DataBlock::GetExtraBlockCount(big) == 1);
+            }
+
+            // out bound
+            {
+                DataBlock big = BlockCreater::EmptyBigBlock(64);
+                big.AddData("1234567890", "12345678901234567890123456789""12345678901234567890123456789012345678901234567");
+                CPPUNIT_ASSERT(DataBlock::GetExtraBlockCount(big) == 2);
+            }
         }
     }
 
@@ -113,21 +123,39 @@ void DataBlockTest::test_CreateDataAndGetData()
             std::string key = "1234567890";
             std::string value = "123456789012345678901234567890";
             const std::vector<DataBlock>& blocks = DataBlock::CreateBlockWithBigData(blockSize, key, value);
+            CPPUNIT_ASSERT(blocks.size() == 2);
             const key_value_map_t& datas = DataBlock::GetData(blocks);
-            CPPUNIT_ASSERT(datas.size() == 2);
+            CPPUNIT_ASSERT(datas.size() == 1);
             CPPUNIT_ASSERT(datas.find("1234567890") != datas.end());
             CPPUNIT_ASSERT(datas.find("1234567890")->second == "123456789012345678901234567890");
         }
 
         // more more data
+            // maxValueLen of dataOnly(64) = 46; // 64 - 16 - 2;
         {
-            size_t blockSize = 64; // valueSize when keySize=10:  64 - 16 - 2 - 10 - 1 - 4 - 2 = 29
-            std::string key = "1234567890";
-            std::string value = "12345678901234567890123456789""12345678901234567890123456789""1";
-            const std::vector<DataBlock>& blocks = DataBlock::CreateBlockWithBigData(blockSize, key, value);
-            const key_value_map_t& datas = DataBlock::GetData(blocks);
-            CPPUNIT_ASSERT(datas.size() == 3);
-            CPPUNIT_ASSERT(datas.find("1234567890")->second == "12345678901234567890123456789""12345678901234567890123456789""1");
+            // in bound
+            {
+                size_t blockSize = 64; // valueSize when keySize=10:  64 - 16 - 2 - 10 - 1 - 4 - 2 = 29
+                std::string key = "1234567890";
+                std::string value = "12345678901234567890123456789""1234567890123456789012345678901234567890123456";
+                const std::vector<DataBlock>& blocks = DataBlock::CreateBlockWithBigData(blockSize, key, value);
+                CPPUNIT_ASSERT(blocks.size() == 2);
+                const key_value_map_t& datas = DataBlock::GetData(blocks);
+                CPPUNIT_ASSERT(datas.size() == 1);
+                CPPUNIT_ASSERT(datas.find("1234567890")->second == value);
+            }
+
+            // out bound
+            {
+                size_t blockSize = 64; // valueSize when keySize=10:  64 - 16 - 2 - 10 - 1 - 4 - 2 = 29
+                std::string key = "1234567890";
+                std::string value = "12345678901234567890123456789""12345678901234567890123456789012345678901234567";
+                const std::vector<DataBlock>& blocks = DataBlock::CreateBlockWithBigData(blockSize, key, value);
+                CPPUNIT_ASSERT(blocks.size() == 3);
+                const key_value_map_t& datas = DataBlock::GetData(blocks);
+                CPPUNIT_ASSERT(datas.size() == 1);
+                CPPUNIT_ASSERT(datas.find("1234567890")->second == value);
+            }
         }
 
         // wrong type for latter block

@@ -8,6 +8,7 @@ class BlockStructure_BigTest : public CPPUNIT_NS::TestFixture
 {
   CPPUNIT_TEST_SUITE( BlockStructure_BigTest );
   CPPUNIT_TEST( test_constructor );
+  CPPUNIT_TEST( test_MaxValueLen );
   CPPUNIT_TEST( test_IsEnoughForData );
   CPPUNIT_TEST( test_ValueSize_CanStoreToBlock );
   CPPUNIT_TEST( test_AddData );
@@ -20,6 +21,7 @@ public:
   void tearDown();
 
   void test_constructor();
+  void test_MaxValueLen();
   void test_IsEnoughForData();
   void test_ValueSize_CanStoreToBlock();
   void test_AddData();

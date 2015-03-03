@@ -22,9 +22,10 @@ DataBlock::DataBlock(const DataBlock& r)
 }
 
 DataBlock::DataBlock(BlockStructure::BlockType blockType, size_t blockSize)
-    : m_pBlockStructure(CreateBlockStructure(blockType, m_Block))
+    : m_pBlockStructure(NULL)
 {
     m_Block.resize(blockSize);
+    m_pBlockStructure = CreateBlockStructure(blockType, m_Block);
 }
 
 DataBlock& DataBlock::operator=(const DataBlock& r)
@@ -165,13 +166,12 @@ key_value_map_t DataBlock::GetData(const std::vector<DataBlock>& blocks)
 std::pair<std::string /*key*/, std::string /*value*/> DataBlock::GetBigData(const std::vector<DataBlock>& blocks)
 {
     const DataBlock& big_block = blocks[0];
-    assert_check(big_block.Type() == BlockStructure::eBlockType_Big, "");
+    assert_check(big_block.Type() == BlockStructure::eBlockType_Big, "DataBlock::GetBigData");
 
     const std::string& key = big_block.GetBlockStructure().GetKey();
 
     std::string value = big_block.GetBlockStructure().GetValueStoredInBlock();
     const size_t extraBlockCount = big_block.GetBlockStructure().GetExtraBlockCount();
-    printf("\n11111111111111111111111111111111111\nblocks size: %d\n", blocks.size());
     exception_assert(extraBlockCount == (blocks.size() - 1), "DataBlock::GetBigData");
     for (size_t i = 1; i <= extraBlockCount; ++i)
     {

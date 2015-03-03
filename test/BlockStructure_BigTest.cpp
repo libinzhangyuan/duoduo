@@ -37,6 +37,14 @@ void BlockStructure_BigTest::test_constructor()
 {
 }
 
+void BlockStructure_BigTest::test_MaxValueLen()
+{
+    BlockStructure_Big::StructCalc calc(64); // valueSize when keySize=10:  64 - 16 - 2 - 10 - 1 - 4 - 2 = 29
+    CPPUNIT_ASSERT(calc.MaxValueLen(10) == 29);
+    CPPUNIT_ASSERT(calc.MaxValueLen(39) == 0);
+    CPPUNIT_ASSERT_CHECKING_THROW(calc.MaxValueLen(40));
+}
+
 void BlockStructure_BigTest::test_IsEnoughForData()
 {
     block_t block;

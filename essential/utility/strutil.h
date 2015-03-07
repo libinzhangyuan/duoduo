@@ -44,6 +44,8 @@ BEGIN_ES_NAMESPACE
 	::std::string ConvertToCStyleStr(const ::std::string& _Str); // 测试在BinaryStreamTester下 bufTester
 	::std::string ConvertFromCStyleStr(const ::std::string& _CStyleStr);
 
+    ::std::string ToHexDumpText(const std::string& _Str, size_t width);
+
 	// 将字符 '0'-'9'  'a'-'f'  'A'-'F' 转为所对应的数字.  A->10  B->11 f->15
 	int ToHexDigit( char c );
 

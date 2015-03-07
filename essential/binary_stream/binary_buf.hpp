@@ -50,6 +50,7 @@ BEGIN_ES_NAMESPACE
 
         inline std::string to_std_string(void) const;
         inline std::string to_cstyle_str(void) const;
+        inline std::string to_hex_dump_str(void) const;
 
 		inline size_t size(void) const;
 		inline void resize(size_t _Newsize);
@@ -149,6 +150,10 @@ BEGIN_ES_NAMESPACE
         return ConvertToCStyleStr(m_Str);
     }
 
+    inline ::std::string _binary_buf::to_hex_dump_str(void) const
+    {
+        return ToHexDumpText(m_Str, 32);
+    }
 
 	inline _binary_buf& _binary_buf::operator = (const _binary_buf& b) 
 	{

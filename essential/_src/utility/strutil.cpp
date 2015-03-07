@@ -1,6 +1,9 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sstream>
+#include <iomanip>
+
 #include "../../check_function.h"
 #include "../../utility/strutil.h"
 
@@ -218,7 +221,45 @@ int ToHexDigit( char c )
 	return rstString;
 }
 
+std::string hexdump_oneline(const std::string& line, size_t width)
+{
+    std::ostringstream ostrm;
+    for (size_t i=0;i< line.size(); i++)
+    {
+        char hex_text[16] = "";
+        snprintf(hex_text, sizeof(hex_text), "%02X ", (unsigned char)(line[i]));
+        ostrm << hex_text;
+        if (i == 7 || i == 15 || i == 23)
+            ostrm << ' ';
+    }
+    for (unsigned long spacer = line.size(); spacer < width ; spacer++)
+        ostrm << "    ";
+    ostrm << ": ";
+    for (size_t i = 0; i < line.size(); i++)
+    {
+        if (line[i] < 32) ostrm << '.';
+        else ostrm << char(line[i]);
+    }
+    ostrm << std::endl;
 
+    return ostrm.str();
+}
+
+::std::string ToHexDumpText(const std::string& _Str, size_t width)
+{
+    std::ostringstream ostrm;
+
+    ::std::string str = _Str;
+    while (str.size() > width)
+    {
+        ::std::string line(str.c_str(), width);
+        ostrm << hexdump_oneline(line, width);
+        str = str.substr(width);
+    }
+    if (str.size() > 0)
+        ostrm << hexdump_oneline(str, width);
+    return ostrm.str();
+}
 
 ///////////////////////////////////////////////////////////////////////
 // ConvertFromCStyleStr的实现代码

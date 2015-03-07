@@ -5,6 +5,10 @@
 #include "DataFileTest.h"
 
 #include "test_def.h"
+#include "test_util.h"
+
+#include <block/BlockStructure_Big.h>
+#include <block/BlockStructure_DataOnly.h>
 
 #define private public
 #define protected public
@@ -158,11 +162,13 @@ void DataFileTest::test_HasBigData()
         CPPUNIT_ASSERT(container.HasBigData() == true);
     }
 }
-/*
+
 void DataFileTest::test_PopBigBlock()
 {
     {
-        DuoDuo::DataFile::CachedKeyValueContainer container(128); // valueSize when keySize=18:  64 - 16 - 2 - 18 - 1 - 4 - 2 = 21
+        DuoDuo::DataFile::CachedKeyValueContainer container(128); // BigBlock: valueSize when keySize=18:  128 - 16 - 2 - 18 - 1 - 4 - 2 = 85
+                                                                  // NormalBlock: keySection  22   // (128 * 5 / 16) - 16 - 2
+                                                                  // NormalBlock: DataSection 86   // (128 * 11 / 16) - 2
 
         // empty
         {
@@ -178,17 +184,18 @@ void DataFileTest::test_PopBigBlock()
 
         // has one big data
         {
-            container.AddData("123456789012345678", "gasdf");
+            CPPUNIT_ASSERT(test_str("123", 18).size() == 18);
+            container.AddData(test_str("123", 18), "gasdf");
             const std::vector<DataBlock>& blocks = container.PopBigBlock();
             CPPUNIT_ASSERT(blocks.size() == 1);
             CPPUNIT_ASSERT(blocks[0].Type() == BlockStructure::eBlockType_Big);
 
             // todo get data by index and check the data.
 
-            BlockStructure_Big* pStruct = dynamic_cast<BlockStructure_Big>(blocks[0].m_pBlockStructure);
-            CPPUNIT_ASSERT(pStruct->m_Key == "123456789012345678");
-            CPPUNIT_ASSERT(pStruct->m_m_ValueStoredInBlock == "gasdf");
-            CPPUNIT_ASSERT(pStruct->m_ValueTotalLen == "5");
+            BlockStructure_Big* pStruct = dynamic_cast<BlockStructure_Big*>(blocks[0].m_pBlockStructure);
+            CPPUNIT_ASSERT(pStruct->GetKey() == test_str("123", 18));
+            CPPUNIT_ASSERT(pStruct->GetValueStoredInBlock() == "gasdf");
+            CPPUNIT_ASSERT(pStruct->GetValueTotalLen() == 5);
 
             CPPUNIT_ASSERT(container.PopBigBlock().size() == 0);
         }
@@ -197,46 +204,46 @@ void DataFileTest::test_PopBigBlock()
         {
             // in bound
             {
-                container.AddData("123456789012345678", "123456789012345678901");
+                container.AddData(test_str("ia", 18), test_str("value85", 85));
                 const std::vector<DataBlock>& blocks = container.PopBigBlock();
                 CPPUNIT_ASSERT(blocks.size() == 1);
-                BlockStructure_Big* pStruct0 = dynamic_cast<BlockStructure_Big>(blocks[0].m_pBlockStructure);
-                CPPUNIT_ASSERT(pStruct0->GetKey() == "123456789012345678");
-                CPPUNIT_ASSERT(pStruct0->GetValueStoredInBlock() == "123456789012345678901");
-                CPPUNIT_ASSERT(pStruct0->GetValueTotalLen() == 21);
+                BlockStructure_Big* pStruct0 = dynamic_cast<BlockStructure_Big*>(blocks[0].m_pBlockStructure);
+                CPPUNIT_ASSERT(pStruct0->GetKey() == test_str("ia", 18));
+                CPPUNIT_ASSERT(pStruct0->GetValueStoredInBlock() == test_str("value85", 85));
+                CPPUNIT_ASSERT(pStruct0->GetValueTotalLen() == 85);
 
                 CPPUNIT_ASSERT(container.PopBigBlock().size() == 0);
             }
 
             // out bound
             {
-                container.AddData("123456789012345678", "1234567890123456789012");
+                container.AddData(test_str("ia", 18), test_str("value86", 86));
                 const std::vector<DataBlock>& blocks = container.PopBigBlock();
                 CPPUNIT_ASSERT(blocks.size() == 2);
                 CPPUNIT_ASSERT(blocks[0].Type() == BlockStructure::eBlockType_Big);
                 CPPUNIT_ASSERT(blocks[1].Type() == BlockStructure::eBlockType_DataOnly);
-                BlockStructure_Big* pStruct0 = dynamic_cast<BlockStructure_Big>(blocks[0].m_pBlockStructure);
-                CPPUNIT_ASSERT(pStruct0->GetKey() == "123456789012345678");
-                CPPUNIT_ASSERT(pStruct0->GetValueStoredInBlock() == "123456789012345678901");
-                CPPUNIT_ASSERT(pStruct0->GetValueTotalLen() == 22);
+                BlockStructure_Big* pStruct0 = dynamic_cast<BlockStructure_Big*>(blocks[0].m_pBlockStructure);
+                CPPUNIT_ASSERT(pStruct0->GetKey() == test_str("ia", 18));
+                CPPUNIT_ASSERT(pStruct0->GetValueStoredInBlock() == test_str("value86", 85));
+                CPPUNIT_ASSERT(pStruct0->GetValueTotalLen() == 86);
 
-                BlockStructure_Big* pStruct1 = dynamic_cast<BlockStructure_DataOnly>(blocks[1].m_pBlockStructure);
-                CPPUNIT_ASSERT(pStruct1->GetValueStoredInBlock() == "2");
+                const BlockStructure_DataOnly* pStruct1 = dynamic_cast<const BlockStructure_DataOnly*>(blocks[1].GetBlockStructurePtr());
+                CPPUNIT_ASSERT(pStruct1->GetValueStoredInBlock() == "6");
 
                 CPPUNIT_ASSERT(container.PopBigBlock().size() == 0);
             }
 
             // more more dataOnlyBlock
             {
-                container.AddData("fsd4567890123456781", "12345678901234567890121");
-                container.AddData("23f4567890123456782", "12345678901234567890122");
-                container.AddData("ab24567890123456783", "12345678901234567890123");
+                container.AddData(test_str("ia", 18), test_str("value86", 86));
+                container.AddData(test_str("ib", 18), test_str("value86", 86));
+                container.AddData(test_str("ic", 18), test_str("value86", 86));
                 const std::vector<DataBlock>& blocks0 = container.PopBigBlock();
-                CPPUNIT_ASSERT(blocks.size() == 2);
+                CPPUNIT_ASSERT(blocks0.size() == 2);
                 const std::vector<DataBlock>& blocks1 = container.PopBigBlock();
-                CPPUNIT_ASSERT(blocks.size() == 2);
+                CPPUNIT_ASSERT(blocks1.size() == 2);
                 const std::vector<DataBlock>& blocks2 = container.PopBigBlock();
-                CPPUNIT_ASSERT(blocks.size() == 2);
+                CPPUNIT_ASSERT(blocks2.size() == 2);
                 CPPUNIT_ASSERT(container.PopBigBlock().size() == 0);
             }
 
@@ -244,4 +251,4 @@ void DataFileTest::test_PopBigBlock()
 
         // has more big data
     }
-}*/
+}

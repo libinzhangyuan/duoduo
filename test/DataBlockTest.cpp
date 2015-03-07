@@ -213,10 +213,11 @@ void DataBlockTest::test_CreateDataAndGetData()
             std::string key = "1234567890";
             std::string value = "12345678901234567890123456789""12345678901234567890123456789""1";
             std::vector<DataBlock> blocks = DataBlock::CreateBlockWithBigData(blockSize, key, value);
-            blocks[2] = BlockCreater::EmptyNormalBlock(64);
+            CPPUNIT_ASSERT(blocks.size() == 2);
+            blocks[1] = BlockCreater::EmptyNormalBlock(64);
             CPPUNIT_ASSERT_THROW(DataBlock::GetData(blocks), Essential::AssertException);
 
-            blocks[2] = BlockCreater::EmptyBigBlock(64);
+            blocks[1] = BlockCreater::EmptyBigBlock(64);
             CPPUNIT_ASSERT_THROW(DataBlock::GetData(blocks), Essential::AssertException);
         }
 
@@ -229,7 +230,7 @@ void DataBlockTest::test_CreateDataAndGetData()
 
             std::string another_value = "gadsfa;sdhjfhwefhauihfuhywefgagsdfkgasudgfgakdgfaisdgfagsdgfagsdfjagsdfdsfasdfasdfasdf";
             const std::vector<DataBlock>& another_blocks = DataBlock::CreateBlockWithBigData(blockSize, key, another_value);
-            blocks[2] = another_blocks[2];
+            blocks[1] = another_blocks[1];
             CPPUNIT_ASSERT_THROW(DataBlock::GetData(blocks), Essential::AssertException);
         }
     }

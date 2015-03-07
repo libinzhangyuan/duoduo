@@ -42,6 +42,7 @@ std::vector<DataBlock> BlockCreater::CreateBlockWithBigData(size_t blockSize, co
     DataBlock big(BlockStructure::eBlockType_Big, blockSize);
     const size_t bigBlockMaxValueLen = BlockStructure_Big::StructCalc(blockSize).MaxValueLen(key.size());
     big.AddData(key, value);
+    big.PackBlock();
     blocks.push_back(big);
 
     // DataOnlyBlock
@@ -53,12 +54,17 @@ std::vector<DataBlock> BlockCreater::CreateBlockWithBigData(size_t blockSize, co
             DataBlock dataOnly(BlockStructure::eBlockType_DataOnly, blockSize);
             const size_t dataOnlyBlockMaxValueLen = BlockStructure_DataOnly::StructCalc(blockSize).MaxValueLen();
             dataOnly.AddData(key, leftValue);
+            dataOnly.PackBlock();
             blocks.push_back(dataOnly);
 
             const size_t valueSizeInThisBlock = std::min(dataOnlyBlockMaxValueLen, leftValue.size());
             leftValue = leftValue.substr(valueSizeInThisBlock, std::string::npos);
         }
     }
+
+    info_log("\n=====CreateBlockWithBigData=====: %ld\n", blocks.size());
+    for (size_t i = 0; i < blocks.size(); ++ i)
+        info_log("--block %ld:%s\n", i, blocks[i].GetDebugText().c_str());
 
     return blocks;
 }

@@ -52,8 +52,9 @@ namespace DuoDuo
             const std::string& value = iter->second;
             if (normalCalc.IsNormalData(key, value) == false)
             {
+                const std::vector<DataBlock>& blocks = DataBlock::CreateBlockWithBigData(m_BlockSize, key, value);
                 m_CachedKeyValues.erase(iter);
-                return DataBlock::CreateBlockWithBigData(m_BlockSize, key, value);
+                return blocks;
             }
         }
         return std::vector<DataBlock>();

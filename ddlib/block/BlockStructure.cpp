@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <sstream>
 
 #include <check_function.h>
 
@@ -105,4 +106,13 @@ const std::string& BlockStructure::GetValueStoredInBlock(void) const
     assert_check(false, "BlockStructure::GetValueStoredInBlock");
     static std::string static_null_str;
     return static_null_str;
+}
+
+std::string BlockStructure::GetDebugText(void) const
+{
+    std::ostringstream ostrm;
+    ostrm << "BlockType: " << m_BlockType << std::endl;
+    ostrm << "BlockSize: " << m_Block.size() << std::endl;
+    ostrm << "BlockSize in Structure:" << m_BlockSize << std::endl;
+    return ostrm.str();
 }

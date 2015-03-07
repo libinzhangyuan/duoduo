@@ -1,4 +1,5 @@
 #include "BlockStructure_Big.h"
+#include <sstream>
 #include "../def.h"
 
 #include <check_function.h>
@@ -150,4 +151,23 @@ void BlockStructure_Big::LoadFromBlock(void)
 size_t BlockStructure_Big::GetExtraBlockCount(void) const
 {
     return CalcExtraBlockCount();
+}
+
+std::string BlockStructure_Big::GetDebugText(void) const
+{
+    std::ostringstream ostrm;
+    ostrm << "\n--BigBlock BlockType: " << m_BlockType << std::endl;
+    ostrm << "BlockSize: " << m_Block.size() <<
+        "  max_key_len:" << m_StructCalc.MaxKeyLen() <<
+        "  max_value_len(when " << m_Key.size() << " keyLen):" << m_StructCalc.MaxValueLen(m_Key.size()) << std::endl;
+    ostrm << "BlockSize in Structure:" << m_BlockSize << std::endl;
+    ostrm << "  m_Key(" << m_Key.size() << "): " << Essential::ConvertToCStyleStr(m_Key) << std::endl;
+    ostrm << "  m_ValueStoredInBlock(" << m_ValueStoredInBlock.size()  << "): " << Essential::ConvertToCStyleStr(m_ValueStoredInBlock) << std::endl;
+    ostrm << "  m_ValueTotalLen: " << m_ValueTotalLen << std::endl;
+    ostrm << "Block Content: " << std::endl;
+    ostrm << GetBlock().to_cstyle_str() << std::endl;
+    ostrm << "Block Content Hex:"<< std::endl;
+    ostrm << GetBlock().to_hex_dump_str() << std::endl;
+    ostrm << "--end" << std::endl;
+    return ostrm.str();
 }

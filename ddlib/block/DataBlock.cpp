@@ -181,3 +181,8 @@ std::pair<std::string /*key*/, std::string /*value*/> DataBlock::GetBigData(cons
 
     return std::make_pair(key, value);
 }
+
+std::string DataBlock::GetDebugText(void) const
+{
+    return GetBlockStructure().GetDebugText();
+}

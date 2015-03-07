@@ -1,5 +1,7 @@
 #include "BlockStructure_DataOnly.h"
 
+#include <sstream>
+
 #include <check_function.h>
 #include <binary_stream/binary_istream.h>
 #include <binary_stream/binary_ostream.h>
@@ -110,4 +112,20 @@ size_t BlockStructure_DataOnly::GetExtraBlockCount(void) const
 {
     assert_check(false, "BlockStructure_DataOnly::GetExtraBlockCount should not call this function!");
     return 0;
+}
+
+std::string BlockStructure_DataOnly::GetDebugText(void) const
+{
+    std::ostringstream ostrm;
+    ostrm << "\n--DataOnlyBlock BlockType: " << m_BlockType << std::endl;
+    ostrm << "BlockSize: " << m_Block.size() <<
+        "  max_value_len: " << m_StructCalc.MaxValueLen() << std::endl;
+    ostrm << "BlockSize in Structure:" << m_BlockSize << std::endl;
+    ostrm << "  m_ValueStoredInBlock(" << m_ValueStoredInBlock.size()  << "): " << Essential::ConvertToCStyleStr(m_ValueStoredInBlock) << std::endl;
+    ostrm << "Block Content: " << std::endl;
+    ostrm << GetBlock().to_cstyle_str() << std::endl;
+    ostrm << "Block Content Hex:"<< std::endl;
+    ostrm << GetBlock().to_hex_dump_str() << std::endl;
+    ostrm << "--end" << std::endl;
+    return ostrm.str();
 }

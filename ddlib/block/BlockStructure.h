@@ -50,6 +50,8 @@ namespace DuoDuo
         //};
         //virtual std::map<std::string /*key*/, std::string /*value*/> LoadData(std::string& block) = NULL;
 
+        virtual std::string GetDebugText(void) const;
+
     protected:
         size_t HeadSize(void) const;
         void CleanBody(void);

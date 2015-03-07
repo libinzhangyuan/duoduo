@@ -58,6 +58,9 @@ namespace DuoDuo
                 size_t m_BlockSize;
         };
 
+    public:
+        virtual std::string GetDebugText(void) const;
+
     private:
         extra_block_count_t CalcExtraBlockCount(void) const;
 

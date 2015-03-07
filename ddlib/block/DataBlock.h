@@ -52,6 +52,9 @@ namespace DuoDuo
         void PackBlock(void);
         void LoadFromBlock(void);
 
+    public:
+        std::string GetDebugText(void) const;
+
     protected:
 
     private:

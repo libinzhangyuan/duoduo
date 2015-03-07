@@ -40,6 +40,9 @@ namespace DuoDuo
                 size_t m_BlockSize;
         };
 
+    public:
+        virtual std::string GetDebugText(void) const;
+
     protected:
         StructCalc m_StructCalc;
         std::string m_ValueStoredInBlock;

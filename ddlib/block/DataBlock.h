@@ -65,6 +65,8 @@ namespace DuoDuo
 
         BlockStructure& GetBlockStructure(void);
         const BlockStructure& GetBlockStructure(void) const;
+        BlockStructure* GetBlockStructurePtr(void);
+        const BlockStructure* GetBlockStructurePtr(void) const;
 
         static std::pair<std::string /*key*/, std::string /*value*/> GetBigData(const std::vector<DataBlock>& blocks);
 

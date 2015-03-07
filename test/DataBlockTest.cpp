@@ -6,15 +6,16 @@
 
 #include "test_def.h"
 
-#include <block/DataBlock.h>
 #include <block/BlockCreater.h>
 
-#include <block/BlockStructure.h>
-#include <block/BlockStructure_Normal.h>
-#include <block/BlockStructure_Big.h>
 
 #define private public
 #define protected public
+#include <block/DataBlock.h>
+#include <block/BlockStructure.h>
+#include <block/BlockStructure_Normal.h>
+#include <block/BlockStructure_Big.h>
+#include <block/BlockStructure_DataOnly.h>
 #undef private
 #undef protected
 
@@ -39,6 +40,27 @@ void DataBlockTest::test_constructor()
 {
     // copy constructor
     {
+        {
+            DataBlock normal = BlockCreater::EmptyNormalBlock(64);
+            DataBlock normal2(normal);
+            CPPUNIT_ASSERT(&(normal2.GetBlockStructure().GetBlock()) == &normal2.m_Block);
+            CPPUNIT_ASSERT(normal2.GetBlockStructure().BlockSize() == 64);
+            CPPUNIT_ASSERT(normal2.Type() == BlockStructure::eBlockType_Normal);
+        }
+        {
+            DataBlock big = BlockCreater::EmptyBigBlock(64);
+            DataBlock big2(big);
+            CPPUNIT_ASSERT(&(big2.GetBlockStructure().GetBlock()) == &big2.m_Block);
+            CPPUNIT_ASSERT(big2.GetBlockStructure().BlockSize() == 64);
+            CPPUNIT_ASSERT(big2.Type() == BlockStructure::eBlockType_Big);
+        }
+        {
+            DataBlock dataOnly = BlockCreater::EmptyDataOnlyBlock(64);
+            DataBlock dataOnly2(dataOnly);
+            CPPUNIT_ASSERT(&(dataOnly2.GetBlockStructure().GetBlock()) == &dataOnly2.m_Block);
+            CPPUNIT_ASSERT(dataOnly2.GetBlockStructure().BlockSize() == 64);
+            CPPUNIT_ASSERT(dataOnly2.Type() == BlockStructure::eBlockType_DataOnly);
+        }
     }
 }
 
@@ -48,6 +70,33 @@ void DataBlockTest::test_create()
 
 void DataBlockTest::test_assignment()
 {
+    {
+        DataBlock normal = BlockCreater::EmptyNormalBlock(64);
+        DataBlock normal2 = normal;
+        CPPUNIT_ASSERT(&(normal2.GetBlockStructure().GetBlock()) == &normal2.m_Block);
+        CPPUNIT_ASSERT(normal2.GetBlockStructure().BlockSize() == 64);
+        CPPUNIT_ASSERT(normal2.Type() == BlockStructure::eBlockType_Normal);
+    }
+    {
+        DataBlock big = BlockCreater::EmptyBigBlock(64);
+        DataBlock big2 = big;
+        CPPUNIT_ASSERT(&(big2.GetBlockStructure().GetBlock()) == &big2.m_Block);
+        CPPUNIT_ASSERT(big2.GetBlockStructure().BlockSize() == 64);
+        CPPUNIT_ASSERT(big2.Type() == BlockStructure::eBlockType_Big);
+
+        DataBlock big3 = BlockCreater::EmptyBigBlock(64);
+        big2 = big3;
+    }
+    {
+        DataBlock dataOnly = BlockCreater::EmptyDataOnlyBlock(64);
+        DataBlock dataOnly2 = dataOnly;
+        CPPUNIT_ASSERT(&(dataOnly2.GetBlockStructure().GetBlock()) == &dataOnly2.m_Block);
+        CPPUNIT_ASSERT(dataOnly2.GetBlockStructure().BlockSize() == 64);
+        CPPUNIT_ASSERT(dataOnly2.Type() == BlockStructure::eBlockType_DataOnly);
+
+        DataBlock dataOnly3 = BlockCreater::EmptyDataOnlyBlock(64);
+        dataOnly2 = dataOnly3;
+    }
 }
 
 void DataBlockTest::test_GetExtraBlockCount()

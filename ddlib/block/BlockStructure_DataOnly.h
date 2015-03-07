@@ -13,7 +13,7 @@ namespace DuoDuo
         BlockStructure_DataOnly(block_t& block) :
             BlockStructure(block, BlockStructure::eBlockType_DataOnly),
             m_StructCalc(block.size()) {}
-        virtual BlockStructure* Clone(void);
+        virtual BlockStructure* Clone(block_t& blockNewStructureBindingTo);
 
         virtual bool IsEnoughForData(const std::string& key, const std::string& value) const;
         virtual void AddData(const std::string& key, const std::string& value);

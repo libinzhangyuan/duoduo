@@ -17,7 +17,7 @@ DataBlock::DataBlock(void)
 
 DataBlock::DataBlock(const DataBlock& r)
     : m_Block(r.m_Block)
-    , m_pBlockStructure(r.m_pBlockStructure->Clone())
+    , m_pBlockStructure(r.m_pBlockStructure->Clone(m_Block))
 {
 }
 
@@ -39,7 +39,7 @@ DataBlock& DataBlock::operator=(const DataBlock& r)
         delete m_pBlockStructure;
         m_pBlockStructure = NULL;
     }
-    m_pBlockStructure = r.m_pBlockStructure->Clone();
+    m_pBlockStructure = r.m_pBlockStructure->Clone(m_Block);
     return *this;
 }
 
@@ -98,6 +98,16 @@ BlockStructure& DataBlock::GetBlockStructure(void)
 const BlockStructure& DataBlock::GetBlockStructure(void) const
 {
     return *m_pBlockStructure;
+}
+
+const BlockStructure* DataBlock::GetBlockStructurePtr(void) const
+{
+    return m_pBlockStructure;
+}
+
+BlockStructure* DataBlock::GetBlockStructurePtr(void)
+{
+    return m_pBlockStructure;
 }
 
 bool DataBlock::IsEnoughForData(const std::string& key, const std::string& value) const

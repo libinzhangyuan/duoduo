@@ -23,7 +23,7 @@ namespace DuoDuo
             m_Block(block), m_BlockType(blockType), m_BlockSize(block.size()) {}
         virtual ~BlockStructure(void) {}
 
-        virtual BlockStructure* Clone(void) = 0;
+        virtual BlockStructure* Clone(block_t& blockNewStructureBindingTo) = 0;
 
         //static BlockStructure* SelectStructure(const std::string& key, const std::string& value);
         static BlockStructure* Create(block_t& block, BlockType blockType);
@@ -58,11 +58,12 @@ namespace DuoDuo
         BlockType GetBlockTypeFromBlock(void) const;
         block_t& GetBlock(void) {return m_Block;}
         const block_t& GetBlock(void) const {return m_Block;}
+        BlockType GetBlockType(void) const {return m_BlockType;}
         const size_t BlockSize(void) const {return m_Block.size();}
         void InitHead(void) const;
 
     protected:
-        block_t& m_Block;
+        block_t& m_Block; // --known
 
         BlockType m_BlockType;
         size_t m_BlockSize;

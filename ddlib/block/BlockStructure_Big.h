@@ -16,7 +16,7 @@ namespace DuoDuo
     public:
         BlockStructure_Big(block_t& block) : BlockStructure(block, BlockStructure::eBlockType_Big)
                                            , m_ValueTotalLen(-1), m_StructCalc(block.size()) {}
-        virtual BlockStructure* Clone(void);
+        virtual BlockStructure* Clone(block_t& blockNewStructureBindingTo);
 
         virtual bool IsEnoughForData(const std::string& key, const std::string& value) const;
 

@@ -46,9 +46,9 @@ namespace DuoDuo
     }
 }
 
-BlockStructure* BlockStructure_DataOnly::Clone(void)
+BlockStructure* BlockStructure_DataOnly::Clone(block_t& blockNewStructureBindingTo)
 {
-    BlockStructure_DataOnly* pClone = new BlockStructure_DataOnly(m_Block);
+    BlockStructure_DataOnly* pClone = new BlockStructure_DataOnly(blockNewStructureBindingTo);
     pClone->m_BlockType = m_BlockType;
     pClone->m_BlockSize = m_BlockSize;
     pClone->m_StructCalc = m_StructCalc;

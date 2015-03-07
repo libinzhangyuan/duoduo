@@ -42,9 +42,9 @@ namespace DuoDuo
     }
 }
 
-BlockStructure* BlockStructure_Big::Clone(void)
+BlockStructure* BlockStructure_Big::Clone(block_t& blockNewStructureBindingTo)
 {
-    BlockStructure_Big* pClone = new BlockStructure_Big(m_Block);
+    BlockStructure_Big* pClone = new BlockStructure_Big(blockNewStructureBindingTo);
     pClone->m_BlockType = m_BlockType;
     pClone->m_BlockSize = m_BlockSize;
     pClone->m_Key = m_Key;

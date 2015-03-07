@@ -20,7 +20,7 @@ namespace DuoDuo
         BlockStructure_Normal(block_t& block);
         ~BlockStructure_Normal(void) {}
 
-        virtual BlockStructure* Clone(void);
+        virtual BlockStructure* Clone(block_t& blockNewStructureBindingTo);
 
         virtual bool IsEnoughForData(const std::string& key, const std::string& value) const;
         virtual void AddData(const std::string& key, const std::string& value);

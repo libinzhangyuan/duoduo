@@ -104,9 +104,9 @@ BlockStructure_Normal::BlockStructure_Normal(block_t& block)
 {
 }
 
-BlockStructure* BlockStructure_Normal::Clone(void)
+BlockStructure* BlockStructure_Normal::Clone(block_t& blockNewStructureBindingTo)
 {
-    BlockStructure_Normal* pClone = new BlockStructure_Normal(m_Block);
+    BlockStructure_Normal* pClone = new BlockStructure_Normal(blockNewStructureBindingTo);
     pClone->m_BlockType = m_BlockType;
     pClone->m_BlockSize = m_BlockSize;
     pClone->m_KeyValues = m_KeyValues;

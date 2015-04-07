@@ -178,6 +178,13 @@ key_value_map_t DataBlock::GetData(const std::vector<DataBlock>& blocks)
     }
 }
 
+key_value_map_t DataBlock::GetData(const DataBlock& block)
+{
+    const DataBlock& first_block = block;
+    assert_check(block.Type() == BlockStructure::eBlockType_Normal, "DataBlock::GetData from one block");
+    return first_block.GetBlockStructure().GetDatas();
+}
+
 std::pair<std::string /*key*/, std::string /*value*/> DataBlock::GetBigData(const std::vector<DataBlock>& blocks)
 {
     const DataBlock& big_block = blocks[0];

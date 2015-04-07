@@ -43,6 +43,11 @@ namespace DuoDuo
          * GetData(blocks) */
         static key_value_map_t GetData(const std::vector<DataBlock>& blocks);
 
+        /* Get data from one block.
+         * only normal block can call this func
+         */
+        static key_value_map_t GetData(const DataBlock& block);
+
         //static void CreateDataBlocks(const key_value_map_t& datas, const size_t block_size, CreateDataBlocksResult& result);
 
     public:

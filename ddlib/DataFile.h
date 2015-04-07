@@ -50,6 +50,8 @@ namespace DuoDuo
             ////void SaveAllBigData(void); //  saving && clean those data
             ////lastnormalblock SaveAllSmallData(void);
 
+        private:
+            key_value_map_t::const_iterator FindDataCanPutIntoNormalBlock(const DataBlock& block) const;
 
         private:
             size_t m_BlockSize;

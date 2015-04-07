@@ -252,3 +252,108 @@ void DataFileTest::test_PopBigBlock()
         // has more big data
     }
 }
+
+void DataFileTest::test_PopSmallBlock()
+{
+    {
+        DuoDuo::DataFile::CachedKeyValueContainer container(128); // BigBlock: valueSize when keySize=18:  128 - 16 - 2 - 18 - 1 - 4 - 2 = 85
+        // NormalBlock: keySection  22   // (128 * 5 / 16) - 16 - 2
+        // NormalBlock: DataSection 86   // (128 * 11 / 16) - 2
+
+        // empty
+        {
+            const DataBlock& block = container.PopSmallBlock();
+            CPPUNIT_ASSERT(block.IsEmpty() == true);
+            key_value_map_t datas = DataBlock::GetData(block);
+            CPPUNIT_ASSERT(datas.size() == 0);
+        }
+
+        // have big data only
+        {
+            container.AddData(test_str("123", 18), "gasdf");
+            const DataBlock& block = container.PopSmallBlock();
+            CPPUNIT_ASSERT(block.IsEmpty() == true);
+            key_value_map_t datas = DataBlock::GetData(block);
+            CPPUNIT_ASSERT(datas.size() == 0);
+        }
+
+        // has one small data
+        {
+            container.AddData("123", "gasdf");
+            const DataBlock& block = container.PopSmallBlock();
+            CPPUNIT_ASSERT(block.Type() == BlockStructure::eBlockType_Normal);
+            CPPUNIT_ASSERT(block.IsEmpty() == false);
+            key_value_map_t datas = DataBlock::GetData(block);
+            CPPUNIT_ASSERT(datas.size() == 1);
+            CPPUNIT_ASSERT(datas["123"] == "gasdf");
+
+            const DataBlock& block2 = container.PopSmallBlock();
+            CPPUNIT_ASSERT(block2.IsEmpty() == true);
+        }
+
+        // has more small data
+        {
+            // in bound
+            {
+                container.AddData("1", "1");   // key 6, value 4
+                container.AddData("22", "22"); // key 7, value 5
+                container.AddData("4444", test_str("a74", 74)); // key 9, value 74
+                const DataBlock& block = container.PopSmallBlock();
+                CPPUNIT_ASSERT(block.Type() == BlockStructure::eBlockType_Normal);
+                key_value_map_t datas = DataBlock::GetData(block);
+                CPPUNIT_ASSERT(datas["1"] == "1");
+                CPPUNIT_ASSERT(datas["22"] == "22");
+                CPPUNIT_ASSERT(datas["4444"] == test_str("a74", 74));
+
+                const DataBlock& block2 = container.PopSmallBlock();
+                CPPUNIT_ASSERT(block2.IsEmpty() == true);
+            }
+
+            // out bound  key
+            {
+                container.AddData("1", "1");   // key 6, value 4
+                container.AddData("22", "22"); // key 7, value 5
+                container.AddData("44441", test_str("a74", 74)); // key 9, value 74
+                const DataBlock& block0 = container.PopSmallBlock();
+                CPPUNIT_ASSERT(block0.Type() == BlockStructure::eBlockType_Normal);
+                const DataBlock& block1 = container.PopSmallBlock();
+                CPPUNIT_ASSERT(block1.Type() == BlockStructure::eBlockType_Normal);
+                key_value_map_t datas0 = DataBlock::GetData(block0);
+                key_value_map_t datas1 = DataBlock::GetData(block1);
+                CPPUNIT_ASSERT(datas1.size() + datas0.size() == 3);
+                datas1.insert(datas0.begin(), datas0.end());
+                CPPUNIT_ASSERT(datas1.size() == 3);
+                CPPUNIT_ASSERT(datas1["1"] == "1");
+                CPPUNIT_ASSERT(datas1["22"] == "22");
+                CPPUNIT_ASSERT(datas1["44441"] == test_str("a74", 74));
+
+                const DataBlock& block2 = container.PopSmallBlock();
+                CPPUNIT_ASSERT(block2.IsEmpty() == true);
+            }
+
+            // out bound   value
+            {
+                container.AddData("1", "1");   // key 6, value 4
+                container.AddData("22", "223"); // key 7, value 5
+                container.AddData("4444", test_str("a74", 74)); // key 9, value 74
+                const DataBlock& block0 = container.PopSmallBlock();
+                CPPUNIT_ASSERT(block0.Type() == BlockStructure::eBlockType_Normal);
+                const DataBlock& block1 = container.PopSmallBlock();
+                CPPUNIT_ASSERT(block1.Type() == BlockStructure::eBlockType_Normal);
+                key_value_map_t datas0 = DataBlock::GetData(block0);
+                key_value_map_t datas1 = DataBlock::GetData(block1);
+                CPPUNIT_ASSERT(datas1.size() + datas0.size() == 3);
+                datas1.insert(datas0.begin(), datas0.end());
+                CPPUNIT_ASSERT(datas1.size() == 3);
+                CPPUNIT_ASSERT(datas1["1"] == "1");
+                CPPUNIT_ASSERT(datas1["22"] == "223");
+                CPPUNIT_ASSERT(datas1["4444"] == test_str("a74", 74));
+
+
+                const DataBlock& block2 = container.PopSmallBlock();
+                CPPUNIT_ASSERT(block2.IsEmpty() == true);
+            }
+
+        }
+    }
+}

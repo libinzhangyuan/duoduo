@@ -59,6 +59,44 @@ namespace DuoDuo
         }
         return std::vector<DataBlock>();
     }
+
+    DataBlock DataFile::CachedKeyValueContainer::PopSmallBlock(void)
+    {
+        /*
+        block = empty normal block
+        while there is a key/value that can put into block
+        {
+            put key/value into block
+            remove this key/value from cache
+        }
+        */
+
+        DataBlock block = DataBlock::EmptyNormalBlock(m_BlockSize);
+        while (true)
+        {
+            key_value_map_t::const_iterator iter = FindDataCanPutIntoNormalBlock(block);
+            if (iter == m_CachedKeyValues.end())
+                break;
+
+            const std::string& key = iter->first;
+            const std::string& value = iter->second;
+            block.AddData(key, value);
+            m_CachedKeyValues.erase(iter);
+        }
+        return block;
+    }
+
+    key_value_map_t::const_iterator DataFile::CachedKeyValueContainer::FindDataCanPutIntoNormalBlock(const DataBlock& block) const
+    {
+        for (key_value_map_t::const_iterator iter = m_CachedKeyValues.begin(); iter != m_CachedKeyValues.end(); ++iter)
+        {
+            const std::string& key = iter->first;
+            const std::string& value = iter->second;
+            if (block.IsEnoughForData(key, value))
+              return iter;
+        }
+        return m_CachedKeyValues.end();
+    }
 }
 
 namespace DuoDuo

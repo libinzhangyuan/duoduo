@@ -22,6 +22,7 @@ namespace DuoDuo
 
         virtual BlockStructure* Clone(block_t& blockNewStructureBindingTo);
 
+        virtual bool IsEmpty(void) const;
         virtual bool IsEnoughForData(const std::string& key, const std::string& value) const;
         virtual void AddData(const std::string& key, const std::string& value);
         virtual void PackBlock(void);

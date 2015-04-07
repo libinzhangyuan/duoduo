@@ -78,6 +78,11 @@ DataBlock DataBlock::EmptyNormalBlock(const size_t block_size)
     return BlockCreater::EmptyNormalBlock(block_size);
 }
 
+bool DataBlock::IsEmpty(void) const
+{
+    return GetBlockStructure().IsEmpty();
+}
+
 std::vector<DataBlock> DataBlock::CreateBlockWithBigData(size_t blockSize, const std::string& key, const std::string& value)
 {
     return BlockCreater::CreateBlockWithBigData(blockSize, key, value);

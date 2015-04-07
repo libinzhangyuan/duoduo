@@ -54,6 +54,11 @@ BlockStructure* BlockStructure_Big::Clone(block_t& blockNewStructureBindingTo)
     return pClone;
 }
 
+bool BlockStructure_Big::IsEmpty(void) const
+{
+    return (m_Key.size() == 0);
+}
+
 bool BlockStructure_Big::IsEnoughForData(const std::string& key, const std::string& value) const
 {
     return value.size() <= m_StructCalc.MaxValueLen(key.size());

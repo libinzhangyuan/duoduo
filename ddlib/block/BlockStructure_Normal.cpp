@@ -68,12 +68,12 @@ namespace DuoDuo // StructCalc
     size_t BlockStructure_Normal::StructCalc::GetKeyNeedLen(const std::string& key) const
     {
         assert_check(key.size() > 0, "BlockStructure_Normal::StructCalc::GetKeyNeedLen");
-        return sizeof(NormalBlock::key_len_t) + sizeof(data_pos_t) + sizeof(NormalBlock::KEY_CHECK_NUM) + key.size();
+        return sizeof(NormalBlock::key_len_t) + sizeof(data_pos_t) + sizeof(NormalBlock::KEY_CHECK_NUM) + key.size();  // size + 5
     }
 
     size_t BlockStructure_Normal::StructCalc::GetValueNeedLen(const std::string& value) const
     {
-        return sizeof(NormalBlock::data_len_t) + sizeof(NormalBlock::DATA_CHECK_NUM) + value.size();
+        return sizeof(NormalBlock::data_len_t) + sizeof(NormalBlock::DATA_CHECK_NUM) + value.size(); // size + 3
     }
 
     bool BlockStructure_Normal::StructCalc::IsNormalData(const std::string& key, const std::string& value) const
@@ -112,6 +112,11 @@ BlockStructure* BlockStructure_Normal::Clone(block_t& blockNewStructureBindingTo
     pClone->m_KeyValues = m_KeyValues;
     pClone->m_StructCalc = m_StructCalc;
     return pClone;
+}
+
+bool BlockStructure_Normal::IsEmpty(void) const
+{
+    return (m_KeyValues.size() == 0);
 }
 
 bool BlockStructure_Normal::IsEnoughForData(const std::string& key, const std::string& value) const

@@ -30,6 +30,7 @@ namespace DuoDuo
         //static BlockStructure* SelectStructure(const block_t& block); // block is truly data in a file block.
 
         BlockType Type(void) {return m_BlockType;}
+        virtual bool IsEmpty(void) const = 0;
 
         virtual void InitBlock(void) const;
         virtual bool IsEnoughForData(const std::string& key, const std::string& value) const = 0;

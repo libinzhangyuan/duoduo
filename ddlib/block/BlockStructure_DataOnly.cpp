@@ -56,6 +56,12 @@ BlockStructure* BlockStructure_DataOnly::Clone(block_t& blockNewStructureBinding
     return pClone;
 }
 
+bool BlockStructure_DataOnly::IsEmpty(void) const
+{
+    return (m_ValueStoredInBlock.size() == 0);
+}
+
+
 bool BlockStructure_DataOnly::IsEnoughForData(const std::string& key, const std::string& value) const
 {
     assert_check(false, "BlockStructure_DataOnly::IsEnoughForData:  should not call this function!");

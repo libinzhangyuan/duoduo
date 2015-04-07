@@ -18,6 +18,7 @@ namespace DuoDuo
                                            , m_ValueTotalLen(-1), m_StructCalc(block.size()) {}
         virtual BlockStructure* Clone(block_t& blockNewStructureBindingTo);
 
+        virtual bool IsEmpty(void) const;
         virtual bool IsEnoughForData(const std::string& key, const std::string& value) const;
 
         /* usage for big data

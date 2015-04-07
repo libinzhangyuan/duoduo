@@ -25,6 +25,8 @@ namespace DuoDuo
         static DataBlock null_block;
         bool IsNullBlock(void) {return (m_Block.size() == 0);}
 
+        bool IsEmpty(void) const;
+
         static DataBlock EmptyNormalBlock(const size_t block_size);
 
         static std::vector<DataBlock> CreateBlockWithBigData(size_t blockSize, const std::string& key, const std::string& value);
